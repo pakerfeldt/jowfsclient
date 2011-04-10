@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OwClient Bundle
+Bundle-SymbolicName: jowfsclient2
+Bundle-Version: 1.1.0.SNAPSHOT
+Bundle-Vendor: OWFS
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.owfs.jowfsclient
