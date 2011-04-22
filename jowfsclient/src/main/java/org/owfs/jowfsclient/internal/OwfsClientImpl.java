@@ -262,7 +262,10 @@ public class OwfsClientImpl implements OwfsClient {
 				OWNET_DEFAULT_DATALEN, flags, path);
 		try {
 			sendRequest(request);
-			response = readPacket();
+			do {
+				response = readPacket();
+				// Ignore PING messages (i.e. messages with payload length -1)
+			} while(response.getHeader().getPayloadLength() == -1);
 
 			if (flags.getPersistence() != OwPersistence.OWNET_PERSISTENCE_ON) {
 				disconnect();
