@@ -3,3 +3,6 @@ bin/
 target/
 .classpath
 .project
+.idea
+*.iml
+testng-integration.properties
