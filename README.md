@@ -2,6 +2,19 @@ JowfsClient
 ===========
 JowfsClient is a Java client library for the owserver found in the OWFS project (http://www.owfs.org)
 
+Testing
+======
+This library contains both unit and integration test classes. If you want to run integration test you have to
+configure it.
+These tests use owfs server that has to be deployed and running.
+All you have to is to add simple properties file testng-integration.properties to project base directory indicating your
+real owfs server and device ids.
+Your file has to contain variables listed below:
+* owfs.hostname=192.168.1.2
+* owfs.port=4304
+* owfs.device.ds2408.output=29.07960B00000019
+* owfs.device.ds2408.input=29.DD940B00000091
+
 License (BSD)
 =======
 The compilation of software known from the jowfsclient project is distributed 
