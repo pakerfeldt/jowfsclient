@@ -39,7 +39,7 @@ public class OwfsClientThreadSafeFactory {
         }
     }
 
-    public OwfsClient createOwfsClient(OwfsClient client) {
+    public OwfsClient decorate(OwfsClient client) {
         OwfsClientThreadSafeFactory.OwfsInvocationHandler owfsInvocationHandler = new OwfsClientThreadSafeFactory.OwfsInvocationHandler(client);
         return (OwfsClient) Proxy.newProxyInstance(client.getClass().getClassLoader(), new Class[]{OwfsClient.class}, owfsInvocationHandler);
     }

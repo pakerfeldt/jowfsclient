@@ -9,45 +9,35 @@ package org.owfs.jowfsclient.internal;
 
 /**
  * This abstract class represents a owserver protocol packet.
- * 
+ *
  * @author Patrik Akerfeldt
- * 
  */
 public abstract class Packet {
 
-	private Header header;
+    private Header header;
 
-	/**
-	 * Constructs a new {@code Packet}.
-	 * 
-	 * @param version
-	 *            the value of the version field.
-	 * @param payloadLength
-	 *            the value of payload length field.
-	 * @param function
-	 *            the value of the message type / return value field.
-	 * @param dataLength
-	 *            the value of the data length field.
-	 * @param flags
-	 *            a {@link Flags} representation of the value of the flags
-	 *            field.
-	 * @param offset
-	 *            the value of the offset field.
-	 * 
-	 */
-	public Packet(int version, int payloadLength, int function, int dataLength,
-			Flags flags, int offset) {
-		header = new Header(version, payloadLength, function, flags,
-				dataLength, offset);
-	}
+    /**
+     * Constructs a new {@code Packet}.
+     *
+     * @param version       the value of the version field.
+     * @param payloadLength the value of payload length field.
+     * @param function      the value of the message type / return value field.
+     * @param dataLength    the value of the data length field.
+     * @param flags         a {@link Flags} representation of the value of the flags
+     *                      field.
+     * @param offset        the value of the offset field.
+     */
+    public Packet(int version, int payloadLength, int function, int dataLength, Flags flags, int offset) {
+        header = new Header(version, payloadLength, function, flags, dataLength, offset);
+    }
 
-	/**
-	 * Returns the {@link Header} of this packet.
-	 * 
-	 * @return the {@link Header} of this packet.
-	 */
-	public Header getHeader() {
-		return header;
-	}
+    /**
+     * Returns the {@link Header} of this packet.
+     *
+     * @return the {@link Header} of this packet.
+     */
+    public Header getHeader() {
+        return header;
+    }
 
 }

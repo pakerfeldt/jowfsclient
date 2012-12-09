@@ -32,7 +32,7 @@ public class OwfsClientThreadSafeImplTest {
         lock = spy(new ReentrantLock());
         factory.setLock(lock);
         mockOwfsClient = mock(OwfsClient.class);
-        threadSafeOwfsClient = factory.createOwfsClient(mockOwfsClient);
+        threadSafeOwfsClient = factory.decorate(mockOwfsClient);
     }
 
     @Test

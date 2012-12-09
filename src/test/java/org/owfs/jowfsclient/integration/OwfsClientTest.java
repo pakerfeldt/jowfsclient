@@ -52,7 +52,7 @@ public class OwfsClientTest {
 
     @BeforeMethod
     public void constructOwfsClient() {
-        client = OwfsClientFactory.newOwfsClient(owfsHostname, owfsPort, false);
+        client = OwfsClientFactory.newOwfsClient(owfsHostname, owfsPort);
         configureClient();
     }
 

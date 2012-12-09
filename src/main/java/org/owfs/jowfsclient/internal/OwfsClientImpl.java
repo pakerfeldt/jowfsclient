@@ -20,8 +20,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This class is used by applications that wants to communicate with the
@@ -43,24 +43,15 @@ public class OwfsClientImpl implements OwfsClient {
     private Flags flags = new Flags(OWNET_REQUEST);
     private int connectionTimeout = 4000; // default to 4s timeout
 
-    private final boolean threadSafe;
-    private ReentrantLock lock;
-
     /**
      * Constructs a new OwClient with the specified connection details.
      *
-     * @param hostname   A {@link String} representation of the hostname to connect to.
-     * @param port       The port to connect to, which owserver listens to.
-     * @param threadSafe Whether or not the {@link OwfsClient} instance should be
-     *                   thread safe. If the client will only be used by one thread,
-     *                   this can be turned off to increase performance, even though
-     *                   the performance increase will probably be minimal.
+     * @param hostname A {@link String} representation of the hostname to connect to.
+     * @param port     The port to connect to, which owserver listens to.
      */
-    public OwfsClientImpl(String hostname, Integer port, boolean threadSafe) {
+    public OwfsClientImpl(String hostname, Integer port) {
         this.hostname = hostname;
         this.port = port;
-        lock = new ReentrantLock(true);
-        this.threadSafe = threadSafe;
     }
 
     /**
@@ -90,8 +81,7 @@ public class OwfsClientImpl implements OwfsClient {
         if (owSocket == null || !owSocket.isConnected()) {
             owSocket = new Socket();
             try {
-                owSocket.connect(new InetSocketAddress(hostname, port),
-                        connectionTimeout);
+                owSocket.connect(new InetSocketAddress(hostname, port), connectionTimeout);
             } catch (SocketTimeoutException ste) {
                 owSocket = null;
                 return false;
@@ -105,22 +95,17 @@ public class OwfsClientImpl implements OwfsClient {
 
     @Override
     public void disconnect() throws IOException {
-        if (threadSafe) {
-            lock.lock();
-        }
-        try {
-            if (owIn != null)
-                owIn.close();
+        if (owIn != null) {
+            owIn.close();
             owIn = null;
-            if (owOut != null)
-                owOut.close();
+        }
+        if (owOut != null) {
+            owOut.close();
             owOut = null;
-            if (owSocket != null)
-                owSocket.close();
+        }
+        if (owSocket != null) {
+            owSocket.close();
             owSocket = null;
-        } finally {
-            if (threadSafe)
-                lock.unlock();
         }
     }
 
@@ -130,7 +115,6 @@ public class OwfsClientImpl implements OwfsClient {
      * established.
      *
      * @throws IOException if an I/O error occurs.
-     * @returns true if connection is established, otherwise false
      */
     private void establishConnection() throws IOException {
         if (owSocket == null
@@ -141,133 +125,67 @@ public class OwfsClientImpl implements OwfsClient {
 
     @Override
     public void setTimeout(int timeout) {
-        if (threadSafe) {
-            lock.lock();
-        }
-        try {
-            connectionTimeout = timeout;
-            if (owSocket != null && !owSocket.isClosed()) {
-                try {
-                    owSocket.setSoTimeout(connectionTimeout);
-                } catch (SocketException e) {
-                    // ignore
-                }
+        connectionTimeout = timeout;
+        if (owSocket != null && !owSocket.isClosed()) {
+            try {
+                owSocket.setSoTimeout(connectionTimeout);
+            } catch (SocketException e) {
+                // ignore
             }
-        } finally {
-            if (threadSafe)
-                lock.unlock();
         }
     }
 
     @Override
     public void setDeviceDisplayFormat(OwDeviceDisplayFormat deviceDisplay) {
-        if (threadSafe) {
-            lock.lock();
-            try {
-                flags.setDeviceDisplayFormat(deviceDisplay);
-            } finally {
-                lock.unlock();
-            }
-        } else
-            flags.setDeviceDisplayFormat(deviceDisplay);
+        flags.setDeviceDisplayFormat(deviceDisplay);
     }
 
     @Override
     public void setTemperatureScale(OwTemperatureScale tempScale) {
-        if (threadSafe) {
-            lock.lock();
-            try {
-                flags.setTemperatureScale(tempScale);
-            } finally {
-                lock.unlock();
-            }
-        } else
-            flags.setTemperatureScale(tempScale);
+        flags.setTemperatureScale(tempScale);
     }
 
     @Override
     public void setPersistence(OwPersistence persistence) {
-        if (threadSafe) {
-            lock.lock();
-            try {
-                flags.setPersistence(persistence);
-            } finally {
-                lock.unlock();
-            }
-        } else
-            flags.setPersistence(persistence);
+        flags.setPersistence(persistence);
     }
 
     @Override
     public void setAlias(OwAlias alias) {
-        if (threadSafe) {
-            lock.lock();
-            try {
-                flags.setAlias(alias);
-            } finally {
-                lock.unlock();
-            }
-        } else
-            flags.setAlias(alias);
+        flags.setAlias(alias);
     }
 
     @Override
     public void setBusReturn(OwBusReturn busReturn) {
-        if (threadSafe) {
-            lock.lock();
-            try {
-                flags.setBusReturn(busReturn);
-            } finally {
-                lock.unlock();
-            }
-        } else
-            flags.setBusReturn(busReturn);
+        flags.setBusReturn(busReturn);
     }
 
     @Override
     public String read(String path) throws IOException, OwfsException {
         ResponsePacket response;
-        if (threadSafe)
-            lock.lock();
-        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_READ,
-                OWNET_DEFAULT_DATALEN, flags, path);
-        try {
-            sendRequest(request);
-            do {
-                response = readPacket();
-                // Ignore PING messages (i.e. messages with payload length -1)
-            } while (response.getHeader().getPayloadLength() == -1);
+        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_READ, OWNET_DEFAULT_DATALEN, flags, path);
+        sendRequest(request);
+        do {
+            response = readPacket();
+            // Ignore PING messages (i.e. messages with payload length -1)
+        } while (response.getHeader().getPayloadLength() == -1);
 
-            disconnectIfConfigured();
-        } finally {
-            if (threadSafe)
-                lock.unlock();
-        }
-        if (response != null && response.getPayload() != null)
-            return response.getPayload();
-        else
-            return null;
+        disconnectIfConfigured();
+        return response.getPayload();
     }
 
     @Override
     public void write(String path, String dataToWrite) throws IOException, OwfsException {
-        if (threadSafe)
-            lock.lock();
-        try {
-            RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_WRITE, flags, path, dataToWrite);
-            sendRequest(request);
-            /*
-                * Even if we're not interested in the result of the response packet
-                * we must read the packet from the socket. Partly to clean incoming
-                * bytes but also in order to throw exceptions on error.
-                */
-            readPacket();
+        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_WRITE, flags, path, dataToWrite);
+        sendRequest(request);
+        /*
+        * Even if we're not interested in the result of the response packet
+        * we must read the packet from the socket. Partly to clean incoming
+        * bytes but also in order to throw exceptions on error.
+        */
+        readPacket();
 
-            disconnectIfConfigured();
-        } finally {
-            if (threadSafe)
-                lock.unlock();
-        }
+        disconnectIfConfigured();
     }
 
     private void disconnectIfConfigured() throws IOException {
@@ -279,81 +197,49 @@ public class OwfsClientImpl implements OwfsClient {
     @Override
     public Boolean exists(String path) throws IOException, OwfsException {
         ResponsePacket response;
-        if (threadSafe)
-            lock.lock();
-        try {
-            RequestPacket request = new RequestPacket(
-                    OwMessageType.OWNET_MSG_PRESENCE, 0, flags, path);
-            sendRequest(request);
-            response = readPacket();
+        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_PRESENCE, 0, flags, path);
+        sendRequest(request);
+        response = readPacket();
 
-            disconnectIfConfigured();
-        } finally {
-            if (threadSafe)
-                lock.unlock();
-        }
-        if (response.getHeader().getFunction() >= 0) {
-            return true;
-        } else
-            /*
-                * FIXME: This must be taken care of, method should return false if
-                * device does not exist, not throw an exception as it does no, in
-                * readPacket(). Check what message are returned on error and what
-                * are return when device does not exist.
-                */
-            return false;
+        disconnectIfConfigured();
+        /*
+        * FIXME: This must be taken care of, method should return false if
+        * device does not exist, not throw an exception as it does no, in
+        * readPacket(). Check what message are returned on error and what
+        * are return when device does not exist.
+        */
+        return response.getHeader().getFunction() >= 0;
 
     }
 
     @Override
-    public List<String> listDirectoryAll(String path) throws OwfsException,
-            IOException {
+    public List<String> listDirectoryAll(String path) throws OwfsException, IOException {
         List<String> list = new ArrayList<String>();
-        if (threadSafe)
-            lock.lock();
-        try {
-            RequestPacket request = new RequestPacket(
-                    OwMessageType.OWNET_MSG_DIRALL, 0, flags, path);
-            sendRequest(request);
-            ResponsePacket response = readPacket();
-            if (response != null && response.getPayload() != null) {
-                String[] arr = response.getPayload().split(",");
-                for (String s : arr) {
-                    list.add(s);
-                }
-            }
-
-            disconnectIfConfigured();
-        } finally {
-            if (threadSafe)
-                lock.unlock();
+        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_DIRALL, 0, flags, path);
+        sendRequest(request);
+        ResponsePacket response = readPacket();
+        if (response != null && response.getPayload() != null) {
+            String[] arr = response.getPayload().split(",");
+            Collections.addAll(list, arr);
         }
+
+        disconnectIfConfigured();
         return list;
     }
 
     @Override
-    public List<String> listDirectory(String path) throws OwfsException,
-            IOException {
+    public List<String> listDirectory(String path) throws OwfsException, IOException {
         List<String> list = new ArrayList<String>();
-        if (threadSafe)
-            lock.lock();
-        try {
-            RequestPacket request = new RequestPacket(
-                    OwMessageType.OWNET_MSG_DIR, 0, flags, path);
+        RequestPacket request = new RequestPacket(OwMessageType.OWNET_MSG_DIR, 0, flags, path);
 
-            sendRequest(request);
+        sendRequest(request);
 
-            ResponsePacket response = null;
-            while ((response = readPacket()) != null
-                    && response.getHeader().getPayloadLength() != 0) {
-                list.add(response.getPayload());
-            }
-
-            disconnectIfConfigured();
-        } finally {
-            if (threadSafe)
-                lock.unlock();
+        ResponsePacket response;
+        while ((response = readPacket()) != null && response.getHeader().getPayloadLength() != 0) {
+            list.add(response.getPayload());
         }
+
+        disconnectIfConfigured();
         return list;
     }
 
@@ -383,8 +269,9 @@ public class OwfsClientImpl implements OwfsClient {
         owOut.write(packet.getPayload());
 
         /* Send data if needed */
-        if (packet.isWritingData())
+        if (packet.isWritingData()) {
             owOut.write(packet.getDataToWrite());
+        }
 
     }
 
