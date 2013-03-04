@@ -16,9 +16,8 @@ import org.owfs.jowfsclient.Enums.OwTemperatureScale;
 /**
  * This class encapsulates the flag header word and has members to get and set
  * the supporting fields.
- * 
+ *
  * @author Patrik Akerfeldt
- * 
  */
 public class Flags {
 
@@ -26,9 +25,8 @@ public class Flags {
 
 	/**
 	 * Constructs a new Flags object.
-	 * 
-	 * @param value
-	 *            the initial flag value.
+	 *
+	 * @param value the initial flag value.
 	 */
 	public Flags(int value) {
 		this.flags = value;
@@ -36,7 +34,7 @@ public class Flags {
 
 	/**
 	 * Returns the {@code int} representation of this instance.
-	 * 
+	 *
 	 * @return the {@code int} representation of this instance.
 	 */
 	public int intValue() {
@@ -45,9 +43,8 @@ public class Flags {
 
 	/**
 	 * Sets the device display format.
-	 * 
-	 * @param deviceDisplay
-	 *            the new display format.
+	 *
+	 * @param deviceDisplay the new display format.
 	 */
 	public void setDeviceDisplayFormat(OwDeviceDisplayFormat deviceDisplay) {
 		/* Reset device display bits */
@@ -58,36 +55,32 @@ public class Flags {
 
 	/**
 	 * Sets the temperature scale.
-	 * 
-	 * @param tempScale
-	 *            the new temperature scale.
+	 *
+	 * @param tempScale the new temperature scale.
 	 */
 	public void setTemperatureScale(OwTemperatureScale tempScale) {
 		/* Reset temperature scale bits */
 		flags &= ~OwTemperatureScale.getBitmask();
-		/* Set new temperature scale */;
+		/* Set new temperature scale */
 		flags |= tempScale.intValue;
 	}
 
 	/**
 	 * Set the persistence bits.
-	 * 
-	 * @param persistence
-	 *            the new persistence value
+	 *
+	 * @param persistence the new persistence value
 	 */
 	public void setPersistence(OwPersistence persistence) {
 		/* Reset persistence */
 		flags &= ~OwPersistence.getBitmask();
-		/* Set persistence bits */;
+		/* Set persistence bits */
 		flags |= persistence.intValue;
 	}
 
 	/**
-	 * Returns the value of the persistence represented as a
-	 * {@link OwPersistence}.
-	 * 
-	 * @return the value of the persistence represented as a
-	 *         {@link OwPersistence}.
+	 * Returns the value of the persistence represented as a {@link OwPersistence}.
+	 *
+	 * @return the value of the persistence represented as a {@link OwPersistence}.
 	 */
 	public OwPersistence getPersistence() {
 		return OwPersistence.getEnum(OwPersistence.getBitmask() | flags);
@@ -95,27 +88,25 @@ public class Flags {
 
 	/**
 	 * Sets the alias bits.
-	 * 
-	 * @param alias
-	 *            the new alias value.
+	 *
+	 * @param alias the new alias value.
 	 */
 	public void setAlias(OwAlias alias) {
 		/* Reset alias */
 		flags &= ~OwAlias.getBitmask();
-		/* Set persistence bits */;
+		/* Set persistence bits */
 		flags |= alias.intValue;
 	}
 
 	/**
 	 * Sets the bus return bits.
-	 * 
-	 * @param busReturn
-	 *            the new busreturn value.
+	 *
+	 * @param busReturn the new busreturn value.
 	 */
 	public void setBusReturn(OwBusReturn busReturn) {
 		/* Reset bus return */
 		flags &= ~OwBusReturn.getBitmask();
-		/* Set persistence bits */;
+		/* Set persistence bits */
 		flags |= busReturn.intValue;
 	}
 }

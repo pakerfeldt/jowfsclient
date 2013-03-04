@@ -28,7 +28,7 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
  * try {
  * 	List&lt;String&gt; dirs = client.listDirectoryAll(&quot;/&quot;);
  * 	for (String d : dirs) {
- * 		System.out.println(d);
+ * 		log.info(d);
  *     }
  * } catch (OwfsException e) {
  * 	// Handle OwfsException
@@ -44,44 +44,42 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
 
 public class OwfsClientFactory {
 
-    private OwfsClientFactory() {
-    }
+	private OwfsClientFactory() {
+	}
 
-    ;
+	/**
+	 * Creates a new {@link OwfsClient} instance.
+	 *
+	 * @param hostname A {@link String} representation of the hostname to connect to.
+	 * @param port     The port to connect to.
+	 * @return a new {@link OwfsClient} instance.
+	 */
+	public static OwfsClient newOwfsClient(String hostname, Integer port) {
+		return new OwfsClientImpl(hostname, port);
+	}
 
-    /**
-     * Creates a new {@link OwfsClient} instance.
-     *
-     * @param hostname A {@link String} representation of the hostname to connect to.
-     * @param port     The port to connect to.
-     * @return a new {@link OwfsClient} instance.
-     */
-    public static OwfsClient newOwfsClient(String hostname, Integer port) {
-        return new OwfsClientImpl(hostname, port);
-    }
+	/**
+	 * Whether or not the {@link OwfsClient} instance should be thread safe. If the client will only be used by one
+	 * thread, this can be turned off to increase performance, even though the performance increase will probably be
+	 * minimal.
+	 *
+	 * @param hostname
+	 * @param port
+	 * @return
+	 */
+	public static OwfsClient newOwfsClientThreadSafe(String hostname, Integer port) {
+		return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(hostname, port));
+	}
 
-    /**
-     * Whether or not the {@link OwfsClient} instance should be thread safe. If the client will only be used by one
-     * thread, this can be turned off to increase performance, even though the performance increase will probably be
-     * minimal.
-     *
-     * @param hostname
-     * @param port
-     * @return
-     */
-    public static OwfsClient newOwfsClientThreadSafe(String hostname, Integer port) {
-        return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(hostname, port));
-    }
-
-    /**
-     * Creates a new {@link OwfsClient} instance.
-     *
-     * @param rootPath A file path to the root directory of the 1-wire file system,
-     *                 e.g. <strong>&quot;/mnt/1wire&quot;</strong> or
-     *                 <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
-     * @return a new {@link OwfsClient} instance.
-     */
-    public static OwfsClient newOwfsClient(String rootPath) {
-        return new OwfsClientRegularFs(rootPath);
-    }
+	/**
+	 * Creates a new {@link OwfsClient} instance.
+	 *
+	 * @param rootPath A file path to the root directory of the 1-wire file system,
+	 *                 e.g. <strong>&quot;/mnt/1wire&quot;</strong> or
+	 *                 <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
+	 * @return a new {@link OwfsClient} instance.
+	 */
+	public static OwfsClient newOwfsClient(String rootPath) {
+		return new OwfsClientRegularFs(rootPath);
+	}
 }

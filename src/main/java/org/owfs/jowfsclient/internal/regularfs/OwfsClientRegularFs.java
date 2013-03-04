@@ -15,25 +15,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.Enums.OwAlias;
 import org.owfs.jowfsclient.Enums.OwBusReturn;
 import org.owfs.jowfsclient.Enums.OwDeviceDisplayFormat;
 import org.owfs.jowfsclient.Enums.OwPersistence;
 import org.owfs.jowfsclient.Enums.OwTemperatureScale;
+import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsException;
 
 /**
  * This is an implementation of {@link OwfsClient} that reads from a file
  * system, instead of communicating directly with the owserver.
- * 
  * It could be used to read the mounted 1-wire file system created by OWFS but
  * also as a simulated version that reads from a static pre-defined file system
  * that mimics an active OWFS.
- * 
+ *
  * @author Patrik Akerfeldt
- * 
  */
 public class OwfsClientRegularFs implements OwfsClient {
 
@@ -57,10 +54,7 @@ public class OwfsClientRegularFs implements OwfsClient {
 	@Override
 	public Boolean exists(String path) throws IOException, OwfsException {
 		File f = new File(root.getAbsolutePath() + path);
-		if (f.exists())
-			return true;
-		else
-			return false;
+		return f.exists();
 	}
 
 	@Override
@@ -110,19 +104,16 @@ public class OwfsClientRegularFs implements OwfsClient {
 	@Override
 	public void setAlias(OwAlias alias) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setBusReturn(OwBusReturn busReturn) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setDeviceDisplayFormat(OwDeviceDisplayFormat deviceDisplay) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -133,13 +124,11 @@ public class OwfsClientRegularFs implements OwfsClient {
 	@Override
 	public void setTemperatureScale(OwTemperatureScale tempScale) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setTimeout(int timeout) {
 		// ignore
-
 	}
 
 	@Override
@@ -152,6 +141,5 @@ public class OwfsClientRegularFs implements OwfsClient {
 			outputStream.writeBytes(dataToWrite);
 		} else
 			throw new OwfsException("Error", 1);
-
 	}
 }

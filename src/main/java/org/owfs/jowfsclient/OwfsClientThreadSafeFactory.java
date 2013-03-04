@@ -12,36 +12,36 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class OwfsClientThreadSafeFactory {
 
-    private ReentrantLock reentrantLock = new ReentrantLock();
+	private ReentrantLock reentrantLock = new ReentrantLock();
 
-    public void setLock(ReentrantLock lock) {
-        this.reentrantLock = lock;
-    }
+	public void setLock(ReentrantLock lock) {
+		this.reentrantLock = lock;
+	}
 
-    private class OwfsInvocationHandler implements InvocationHandler {
+	public OwfsClient decorate(OwfsClient client) {
+		OwfsClientThreadSafeFactory.OwfsInvocationHandler owfsInvocationHandler = new OwfsClientThreadSafeFactory.OwfsInvocationHandler(client);
+		return (OwfsClient) Proxy.newProxyInstance(client.getClass().getClassLoader(), new Class[]{OwfsClient.class}, owfsInvocationHandler);
+	}
 
-        private final OwfsClient owfsClient;
+	private class OwfsInvocationHandler implements InvocationHandler {
 
-        public OwfsInvocationHandler(OwfsClient client) {
-            this.owfsClient = client;
-        }
+		private final OwfsClient owfsClient;
 
-        @Override
-        public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
-            reentrantLock.lock();
-            try {
-                return method.invoke(owfsClient, objects);
-            } catch (InvocationTargetException ex) {
-                throw ex.getTargetException();
-            } finally {
-                reentrantLock.unlock();
-            }
-        }
-    }
+		public OwfsInvocationHandler(OwfsClient client) {
+			this.owfsClient = client;
+		}
 
-    public OwfsClient decorate(OwfsClient client) {
-        OwfsClientThreadSafeFactory.OwfsInvocationHandler owfsInvocationHandler = new OwfsClientThreadSafeFactory.OwfsInvocationHandler(client);
-        return (OwfsClient) Proxy.newProxyInstance(client.getClass().getClassLoader(), new Class[]{OwfsClient.class}, owfsInvocationHandler);
-    }
+		@Override
+		public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+			reentrantLock.lock();
+			try {
+				return method.invoke(owfsClient, objects);
+			} catch (InvocationTargetException ex) {
+				throw ex.getTargetException();
+			} finally {
+				reentrantLock.unlock();
+			}
+		}
+	}
 
 }
