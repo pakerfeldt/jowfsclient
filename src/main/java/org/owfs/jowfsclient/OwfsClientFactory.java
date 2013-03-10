@@ -44,8 +44,8 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
 
 public class OwfsClientFactory {
 
-	private OwfsClientFactory() {
-	}
+	private String hostName;
+	private int portNumber;
 
 	/**
 	 * Creates a new {@link OwfsClient} instance.
@@ -81,5 +81,25 @@ public class OwfsClientFactory {
 	 */
 	public static OwfsClient newOwfsClient(String rootPath) {
 		return new OwfsClientRegularFs(rootPath);
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setPortNumber(int portNumber) {
+		this.portNumber = portNumber;
+	}
+
+	public int getPortNumber() {
+		return portNumber;
+	}
+
+	public OwfsClient createNewConnection() {
+		return OwfsClientFactory.newOwfsClient(hostName, portNumber);
 	}
 }

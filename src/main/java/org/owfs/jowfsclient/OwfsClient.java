@@ -9,7 +9,6 @@ package org.owfs.jowfsclient;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.owfs.jowfsclient.Enums.OwAlias;
 import org.owfs.jowfsclient.Enums.OwBusReturn;
 import org.owfs.jowfsclient.Enums.OwDeviceDisplayFormat;

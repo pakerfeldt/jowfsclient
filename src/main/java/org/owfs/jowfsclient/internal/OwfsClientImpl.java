@@ -87,8 +87,9 @@ public class OwfsClientImpl implements OwfsClient {
 			owIn = new DataInputStream(owSocket.getInputStream());
 			owOut = new DataOutputStream(owSocket.getOutputStream());
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -117,8 +118,9 @@ public class OwfsClientImpl implements OwfsClient {
 	private void establishConnection() throws IOException {
 		if (owSocket == null
 				|| !owSocket.isConnected()
-				|| !(flags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON))
+				|| !(flags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON)) {
 			connect(true);
+		}
 	}
 
 	@Override
@@ -165,7 +167,7 @@ public class OwfsClientImpl implements OwfsClient {
 		sendRequest(request);
 		do {
 			response = readPacket();
-			// Ignore PING messages (i.e. messages with payload length -1)
+// Ignore PING messages (i.e. messages with payload length -1)
 		} while (response.getHeader().getPayloadLength() == -1);
 
 		disconnectIfConfigured();
@@ -177,10 +179,10 @@ public class OwfsClientImpl implements OwfsClient {
 		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_WRITE, flags, path, dataToWrite);
 		sendRequest(request);
 		/*
-        * Even if we're not interested in the result of the response packet
-        * we must read the packet from the socket. Partly to clean incoming
-        * bytes but also in order to throw exceptions on error.
-        */
+		* Even if we're not interested in the result of the response packet
+		* we must read the packet from the socket. Partly to clean incoming
+		* bytes but also in order to throw exceptions on error.
+		*/
 		readPacket();
 
 		disconnectIfConfigured();
@@ -200,12 +202,12 @@ public class OwfsClientImpl implements OwfsClient {
 		response = readPacket();
 
 		disconnectIfConfigured();
-        /*
-        * FIXME: This must be taken care of, method should return false if
-        * device does not exist, not throw an exception as it does no, in
-        * readPacket(). Check what message are returned on error and what
-        * are return when device does not exist.
-        */
+		/*
+		* FIXME: This must be taken care of, method should return false if
+		* device does not exist, not throw an exception as it does no, in
+		* readPacket(). Check what message are returned on error and what
+		* are return when device does not exist.
+		*/
 		return response.getHeader().getFunction() >= 0;
 
 	}
@@ -250,22 +252,19 @@ public class OwfsClientImpl implements OwfsClient {
 	private void sendRequest(RequestPacket packet) throws IOException {
 		establishConnection();
 
-        /*
-           * TODO: Should we check that there is no data in the DataInputStream before sending our request?
-           *
-           * / Send header
-           */
+		/*
+		* TODO: Should we check that there is no data in the DataInputStream before sending our request?
+		* / Send header
+		*/
 		owOut.writeInt(packet.getHeader().getVersion());
 		owOut.writeInt(packet.getHeader().getPayloadLength());
 		owOut.writeInt(packet.getHeader().getFunction());
 		owOut.writeInt(packet.getHeader().getFlags().intValue());
 		owOut.writeInt(packet.getHeader().getDataLength());
 		owOut.writeInt(packet.getHeader().getOffset());
-
-        /* Send payload */
+		/* Send payload */
 		owOut.write(packet.getPayload());
-
-        /* Send data if needed */
+		/* Send data if needed */
 		if (packet.isWritingData()) {
 			owOut.write(packet.getDataToWrite());
 		}
@@ -273,11 +272,9 @@ public class OwfsClientImpl implements OwfsClient {
 	}
 
 	/**
-	 * Reads a owserver protocol packet from the tcp socket and returns the
-	 * result as a {@link ResponsePacket}.
+	 * Reads a owserver protocol packet from the tcp socket and returns the result as a {@link ResponsePacket}.
 	 *
-	 * @return a {@link ResponsePacket} read from the tcp socket, null if no
-	 *         packet could be read.
+	 * @return a {@link ResponsePacket} read from the tcp socket, null if no packet could be read.
 	 * @throws IOException   if an I/O error occurs
 	 * @throws OwfsException if owserver returns an error.
 	 */
@@ -293,38 +290,34 @@ public class OwfsClientImpl implements OwfsClient {
 		} catch (EOFException e) {
 			return null;
 		}
-
 		Flags returnFlags = new Flags(rawHeader[3]);
-
-        /* Grant/deny persistence */
+		/* Grant/deny persistence */
 		if (returnFlags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
 			flags.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-		} else
+		} else {
 			flags.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_OFF);
-
+		}
 		String payload = null;
 		if (rawHeader[2] >= 0) { /* Check return value */
 			if (rawHeader[1] >= 0) { /* Bytes to read */
 				byte[] payloadBytes = new byte[rawHeader[1]];
 				owIn.readFully(payloadBytes, 0, payloadBytes.length);
-
-                /* TODO: why is not offset header field used here? */
+				/* TODO: why is not offset header field used here? */
 				if (rawHeader[1] > 0) {
 					// Remove ending zero byte if any
-					if (payloadBytes[rawHeader[1] - 1] == 0)
+					if (payloadBytes[rawHeader[1] - 1] == 0) {
 						payload = new String(payloadBytes, 0, rawHeader[1] - 1);
-					else
+					} else {
 						payload = new String(payloadBytes, 0, rawHeader[1]);
-				} else
+					}
+				} else {
 					payload = null;
-
+				}
 			}
 		} else {
-            /* Error received */
+			/* Error received */
 			throw new OwfsException("Error " + rawHeader[2], rawHeader[2]);
 		}
-
-		return new ResponsePacket(rawHeader[0], rawHeader[1], rawHeader[2],
-				new Flags(rawHeader[3]), rawHeader[4], rawHeader[5], payload);
+		return new ResponsePacket(rawHeader[0], rawHeader[1], rawHeader[2], new Flags(rawHeader[3]), rawHeader[4], rawHeader[5], payload);
 	}
 }

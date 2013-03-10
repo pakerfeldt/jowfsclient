@@ -1,11 +1,11 @@
 package org.owfs.jowfsclient.integration;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsClient;
 import org.owfs.jowfsclient.OwfsClientFactory;
 import org.owfs.jowfsclient.TestNGGroups;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
@@ -26,40 +26,43 @@ import org.testng.annotations.Test;
  */
 @Test(groups = TestNGGroups.INTEGRATION)
 public class OwfsClientTest {
-    private static final Log log = LogFactory.getLog(OwfsClientTest.class);
+	private static final Logger log = LoggerFactory.getLogger(OwfsClientTest.class);
 
-    public static final String OWFS_HOSTNAME = "owfs.hostname";
-    public static final String OWFS_PORT = "owfs.port";
+	public static final String OWFS_HOSTNAME = "owfs.hostname";
+	public static final String OWFS_PORT = "owfs.port";
 
-    protected OwfsClient client;
+	protected OwfsClient client;
 
-    private String owfsHostname;
-    private int owfsPort;
+	private String owfsHostname;
+	private int owfsPort;
 
-    @BeforeClass
-    @Parameters(OWFS_HOSTNAME)
-    public void setOwfsHostname(String owfsHostname) {
-        log.info("setOwfsHostname:" + owfsHostname);
-        this.owfsHostname = owfsHostname;
-    }
+	@BeforeClass
+	@Parameters(OWFS_HOSTNAME)
+	public void setOwfsHostname(String owfsHostname) {
+		log.info("setOwfsHostname:" + owfsHostname);
+		this.owfsHostname = owfsHostname;
+	}
 
-    @BeforeClass
-    @Parameters(OWFS_PORT)
-    public void setOwfsPort(int owfsPort) {
-        log.info("setOwfsPort:" + owfsPort);
-        this.owfsPort = owfsPort;
-    }
+	@BeforeClass
+	@Parameters(OWFS_PORT)
+	public void setOwfsPort(int owfsPort) {
+		log.info("setOwfsPort:" + owfsPort);
+		this.owfsPort = owfsPort;
+	}
 
-    @BeforeMethod
-    public void constructOwfsClient() {
-        client = OwfsClientFactory.newOwfsClient(owfsHostname, owfsPort);
-        configureClient();
-    }
+	@BeforeMethod
+	public void constructOwfsClient() {
+		OwfsClientFactory owfsClientFactory = new OwfsClientFactory();
+		owfsClientFactory.setHostName(owfsHostname);
+		owfsClientFactory.setPortNumber(owfsPort);
+		client = owfsClientFactory.createNewConnection();
+		configureClient();
+	}
 
-    private void configureClient() {
-        client.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
-        client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
-        client.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-        client.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
-    }
+	private void configureClient() {
+		client.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
+		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
+		client.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+		client.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
+	}
 }

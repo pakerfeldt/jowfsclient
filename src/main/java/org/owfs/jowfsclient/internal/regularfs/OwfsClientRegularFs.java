@@ -39,9 +39,9 @@ public class OwfsClientRegularFs implements OwfsClient {
 
 	public OwfsClientRegularFs(String rootPath) {
 		root = new File(rootPath);
-		if (!root.isDirectory())
-			throw new IllegalArgumentException(
-					rootPath = " is not a directory.");
+		if (!root.isDirectory()) {
+			throw new IllegalArgumentException(rootPath = " is not a directory.");
+		}
 		root_length = root.getAbsolutePath().length();
 
 	}
@@ -58,8 +58,7 @@ public class OwfsClientRegularFs implements OwfsClient {
 	}
 
 	@Override
-	public List<String> listDirectory(String path) throws OwfsException,
-			IOException {
+	public List<String> listDirectory(String path) throws OwfsException, IOException {
 		List<String> contents = new ArrayList<String>();
 		File directory = new File(root.getAbsolutePath() + path);
 		if (!directory.isDirectory()) {
@@ -76,8 +75,7 @@ public class OwfsClientRegularFs implements OwfsClient {
 	}
 
 	@Override
-	public List<String> listDirectoryAll(String path) throws OwfsException,
-			IOException {
+	public List<String> listDirectoryAll(String path) throws OwfsException, IOException {
 		return listDirectory(path);
 	}
 
@@ -93,12 +91,14 @@ public class OwfsClientRegularFs implements OwfsClient {
 			 */
 			while (reader.ready()) {
 				value += reader.readLine();
-				if (reader.ready())
+				if (reader.ready()) {
 					value += "\n";
+				}
 			}
 			return value;
-		} else
+		} else {
 			throw new OwfsException("Error", 1);
+		}
 	}
 
 	@Override
@@ -132,14 +132,14 @@ public class OwfsClientRegularFs implements OwfsClient {
 	}
 
 	@Override
-	public void write(String path, String dataToWrite) throws IOException,
-			OwfsException {
+	public void write(String path, String dataToWrite) throws IOException, OwfsException {
 		File file = new File(root.getAbsolutePath() + path);
 		if (file.isFile() && file.canWrite()) {
 			DataOutputStream outputStream = new DataOutputStream(
 					new FileOutputStream(file));
 			outputStream.writeBytes(dataToWrite);
-		} else
+		} else {
 			throw new OwfsException("Error", 1);
+		}
 	}
 }

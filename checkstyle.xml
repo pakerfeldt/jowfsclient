@@ -1,35 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE module PUBLIC
-		"-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-		"http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
-<!--
-
-  Checkstyle configuration that checks the sun coding conventions from:
-
-    - the Java Language Specification at
-      http://java.sun.com/docs/books/jls/second_edition/html/index.html
-
-    - the Sun Code Conventions at http://java.sun.com/docs/codeconv/
-
-    - the Javadoc guidelines at
-      http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
-
-    - the JDK Api documentation http://java.sun.com/j2se/docs/api/index.html
-
-    - some best practices
-
-  Checkstyle is very configurable. Be sure to read the documentation at
-  http://checkstyle.sf.net (or in your downloaded distribution).
-
-  Most Checks are configurable, be sure to consult the documentation.
-
-  To completely disable a check, just comment it out or delete it from the file.
-
-  Finally, it is worth reading the documentation.
-
--->
-
+<!-- Checkstyle is very configurable. Be sure to read the documentation at http://checkstyle.sf.net (or in your downloaded distribution).-->
 <module name="Checker">
 	<!--
 			If you set the basedir property below, then all reported file
@@ -65,10 +37,6 @@
 		<property name="format" value="\s+$"/>
 		<property name="message" value="Line has trailing spaces."/>
 	</module>
-	<module name="RegexpSingleline">
-		<property name="format" value="^\s*;\s*$"/>
-		<property name="message" value="Line has empty semicolon."/>
-	</module>
 	<module name="RegexpMultiline">
 		<property name="format" value="System\s*\.(err|out)\s*\.print"/>
 		<property name="message" value="Illegal usage of System.out.println() - use logger instead"/>
@@ -86,54 +54,32 @@
 	<module name="TreeWalker">
 		<property name="tabWidth" value="4"/>
 
-		<!-- Checks for Javadoc comments.                     -->
-		<!-- See http://checkstyle.sourceforge.net/config_javadoc.html -->
+		<!-- 									JAVADOC. See http://checkstyle.sourceforge.net/config_javadoc.html -->
+		<!--<module name="JavadocType"/>-->
 		<!--<module name="JavadocMethod"/>-->
 		<!--<module name="JavadocVariable"/>-->
 		<!--<module name="JavadocStyle"/>-->
 
-		<module name="JavadocType">
-			<property name="scope" value="public"/>
-			<property name="excludeScope" value="anoninner"/>
-			<property name="authorFormat"
-					  value="[A-ZĄĆĘŁŃÓŚŹŻ]{1}[a-ząćęłńóśźż]* [A-ZĄĆĘŁŃÓŚŹŻ]{1}[a-ząćęłńóśźż]* &#60;[a-z]*.[a-z]*@javart.eu>"/>
-			<property name="allowMissingParamTags" value="true"/>
-		</module>
-
-
-		<!-- Checks for Naming Conventions.                  -->
-		<!-- See http://checkstyle.sourceforge.net/config_naming.html -->
-		<!--<module name="ConstantName"/>-->
+		<!-- 									NAMING CONVENTIONS. See http://checkstyle.sourceforge.net/config_naming.html -->
 		<module name="LocalFinalVariableName"/>
 		<module name="LocalVariableName"/>
-		<!--<module name="MemberName"/>-->
-		<!--<module name="MethodName"/>-->
 		<module name="PackageName"/>
 		<module name="ParameterName"/>
 		<module name="StaticVariableName"/>
 		<module name="TypeName"/>
+		<!--<module name="ConstantName"/>-->
+		<!--<module name="MemberName"/>-->
+		<!--<module name="MethodName"/>-->
 
-
-		<!-- Checks for Headers                                -->
-		<!-- See http://checkstyle.sourceforge.net/config_header.html   -->
+		<!-- 									HEADERS. See http://checkstyle.sourceforge.net/config_header.html   -->
 		<!-- <module name="Header">                            -->
-		<!-- The follow property value demonstrates the ability     -->
-		<!-- to have access to ANT properties. In this case it uses -->
-		<!-- the ${basedir} property to allow Checkstyle to be run  -->
-		<!-- from any directory within a project. See property      -->
-		<!-- expansion,                                             -->
-		<!-- http://checkstyle.sourceforge.net/config.html#properties        -->
 		<!-- <property                                              -->
 		<!--     name="headerFile"                                  -->
 		<!--     value="${basedir}/java.header"/>                   -->
 		<!-- </module> -->
-
-		<!-- Following interprets the header file as regular expressions. -->
 		<!-- <module name="RegexpHeader"/>                                -->
 
-
-		<!-- Checks for imports                              -->
-		<!-- See http://checkstyle.sourceforge.net/config_imports.html -->
+		<!-- 									IMPORTS. See http://checkstyle.sourceforge.net/config_imports.html -->
 		<module name="AvoidStarImport"/>
 		<module name="IllegalImport"/>
 		<module name="RedundantImport"/>
@@ -143,22 +89,23 @@
 			<property name="option" value="top"/>
 		</module>
 
-
-		<!-- Checks for Size Violations.                    -->
-		<!-- See http://checkstyle.sourceforge.net/config_sizes.html -->
+		<!-- 									SIZE VIOLATIONS. http://checkstyle.sourceforge.net/config_sizes.html -->
 		<module name="LineLength">
 			<property name="max" value="160"/>
 		</module>
 		<module name="MethodLength"/>
 		<module name="ParameterNumber">
-			<property name="max" value="4"/>
+			<property name="max" value="6"/>
 		</module>
 
-
-		<!-- Checks for whitespace                               -->
-		<!-- See http://checkstyle.sourceforge.net/config_whitespace.html -->
-		<!--<module name="EmptyForIteratorPad"/>-->
+		<!-- 									WHITESPACES. See http://checkstyle.sourceforge.net/config_whitespace.html -->
 		<module name="GenericWhitespace"/>
+		<module name="RegexpSinglelineJava">
+			<property name="format" value="^\t* +\t*\S"/>
+			<property name="message" value="Line has leading space characters; indentation should be performed with tabs only."/>
+			<property name="ignoreComments" value="true"/>
+		</module>
+		<!--<module name="EmptyForIteratorPad"/>-->
 		<!--<module name="MethodParamPad"/>-->
 		<!--<module name="NoWhitespaceAfter"/>-->
 		<!--<module name="NoWhitespaceBefore"/>-->
@@ -168,59 +115,44 @@
 		<!--<module name="WhitespaceAfter"/>-->
 		<!--<module name="WhitespaceAround"/>-->
 
-
-		<!-- Modifier Checks                                    -->
-		<!-- See http://checkstyle.sourceforge.net/config_modifier.html -->
+		<!-- 									MODIFIER See http://checkstyle.sourceforge.net/config_modifier.html -->
 		<module name="ModifierOrder"/>
 		<module name="RedundantModifier"/>
 
-
-		<!-- Checks for blocks. You know, those {}'s         -->
-		<!-- See http://checkstyle.sourceforge.net/config_blocks.html -->
-		<!--<module name="AvoidNestedBlocks"/>-->
+		<!-- 									BLOCKS. See http://checkstyle.sourceforge.net/config_blocks.html -->
 		<module name="EmptyBlock"/>
+		<module name="NeedBraces"/>
+		<!--<module name="AvoidNestedBlocks"/>-->
 		<!--<module name="LeftCurly"/>-->
-		<!--<module name="NeedBraces"/>-->
 		<!--<module name="RightCurly"/>-->
 
-
-		<!-- Checks for common coding problems               -->
-		<!-- See http://checkstyle.sourceforge.net/config_coding.html -->
+		<!-- 									CODING. See http://checkstyle.sourceforge.net/config_coding.html -->
+		<module name="EmptyStatement"/>
+		<module name="MissingSwitchDefault"/>
+		<module name="SimplifyBooleanExpression"/>
+		<module name="SimplifyBooleanReturn"/>
 		<!--<module name="AvoidInlineConditionals"/>-->
 		<!--<module name="DoubleCheckedLocking"/>-->
-		<!-- MY FAVOURITE -->
-		<module name="EmptyStatement"/>
 		<!--<module name="EqualsHashCode"/>-->
 		<!--<module name="HiddenField"/>-->
 		<!--<module name="IllegalInstantiation"/>-->
 		<!--<module name="InnerAssignment"/>-->
 		<!--<module name="MagicNumber"/>-->
-		<module name="MissingSwitchDefault"/>
 		<!--<module name="RedundantThrows"/>-->
-		<module name="SimplifyBooleanExpression"/>
-		<module name="SimplifyBooleanReturn"/>
 
-		<module name="RegexpSinglelineJava">
-			<property name="format" value="^\t* +\t*\S"/>
-			<property name="message" value="Line has leading space characters; indentation should be performed with tabs only."/>
-			<property name="ignoreComments" value="true"/>
-		</module>
-
-		<!-- Checks for class design                         -->
-		<!-- See http://checkstyle.sourceforge.net/config_design.html -->
+		<!-- 									DESIGN. See http://checkstyle.sourceforge.net/config_design.html -->
 		<!--<module name="DesignForExtension"/>-->
 		<!--<module name="FinalClass"/>-->
 		<!--<module name="HideUtilityClassConstructor"/>-->
+
 		<!--<module name="InterfaceIsType"/>-->
 		<!--<module name="VisibilityModifier"/>-->
 
-		<!-- Miscellaneous other checks.                   -->
-		<!-- See http://checkstyle.sourceforge.net/config_misc.html -->
+		<!-- 									MISCELLANEOUS. See http://checkstyle.sourceforge.net/config_misc.html -->
+		<module name="UpperEll"/>
 		<!--<module name="ArrayTypeStyle"/>-->
 		<!--<module name="FinalParameters"/>-->
 		<!--<module name="TodoComment"/>-->
-		<module name="UpperEll"/>
-
 		<module name="FileContentsHolder"/>
 	</module>
 
