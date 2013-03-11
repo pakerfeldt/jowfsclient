@@ -167,7 +167,7 @@ public class OwfsClientImpl implements OwfsClient {
 		sendRequest(request);
 		do {
 			response = readPacket();
-// Ignore PING messages (i.e. messages with payload length -1)
+			// Ignore PING messages (i.e. messages with payload length -1)
 		} while (response.getHeader().getPayloadLength() == -1);
 
 		disconnectIfConfigured();

@@ -7,8 +7,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -38,14 +40,14 @@ public class AlarmingDevicesReaderTest {
 		//given
 		OwfsClientFactory factory = createListingDirsOwfsClientFactory();
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
-		AlarmListener alarmListener = mock(AlarmListener.class);
-		alarmingDevicesReader.setAlarmListener(alarmListener);
+		AlarmingDevicesListener alarmingDevicesListener = mock(AlarmingDevicesListener.class);
+		alarmingDevicesReader.setAlarmListener(alarmingDevicesListener);
 
 		//when
 		alarmingDevicesReader.run();
 
 		//then
-		verify(alarmListener, times(1)).alarmForDevices(DEVICES);
+		verify(alarmingDevicesListener, times(1)).alarmForDevices(DEVICES);
 
 	}
 
@@ -56,6 +58,18 @@ public class AlarmingDevicesReaderTest {
 		when(mock.listDirectoryAll(anyString())).thenReturn(DEVICES);
 		return factory;
 	}
+
+	public void shouldRebuildDevicesListWithoutDirectoryPath() {
+		//given
+		List<String> strings = Arrays.asList("/alarm/T1", "/alarm/T2");
+
+		//when
+		ArrayList<String> fixed = new AlarmingDevicesReader(null).rebuildDevicesListWithoutDirectoryPath(strings);
+
+		//then
+		Assert.assertEquals(Arrays.asList("T1", "T2"),fixed);
+	}
+
 
 
 }
