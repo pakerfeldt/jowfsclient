@@ -10,7 +10,7 @@ package org.owfs.jowfsclient;
 /**
  * This class contains different types of {@code enum}s used by the OwfsClient when
  * communicating with owserver.
- *
+ * http://owfs.org/index.php?page=owserver-flag-word
  * @author Patrik Akerfeldt
  */
 public class Enums {
@@ -136,8 +136,7 @@ public class Enums {
 	}
 
 	/**
-	 * Whether or not to include special directories (settings, statistics,
-	 * uncached,...)
+	 * Whether or not to include special directories (settings, statistics, uncached,...)
 	 */
 	public static enum OwBusReturn {
 		OWNET_BUSRETURN_OFF(0x00000000),

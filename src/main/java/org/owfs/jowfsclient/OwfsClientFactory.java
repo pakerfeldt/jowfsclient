@@ -12,13 +12,8 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
 
 /**
  * This is a factory client for {@link OwfsClient}s.
- * <p/>
- * <p/>
  * Here's an example of how {@code OwfsClientFactory} and {@link OwfsClient} can
  * be used:
- * <p/>
- * <blockquote>
- * <p/>
  * <pre>
  * OwfsClient client = OwfsClientFactory.newOwfsClient(&quot;127.0.0.1&quot;, 3001, true);
  *
@@ -36,8 +31,6 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
  * 	// Handle IOException
  * }
  * </pre>
- * <p/>
- * </blockquote>
  *
  * @author Patrik Akerfeldt
  */
@@ -49,7 +42,6 @@ public class OwfsClientFactory {
 
 	/**
 	 * Creates a new {@link OwfsClient} instance.
-	 *
 	 * @param hostname A {@link String} representation of the hostname to connect to.
 	 * @param port     The port to connect to.
 	 * @return a new {@link OwfsClient} instance.
@@ -62,7 +54,6 @@ public class OwfsClientFactory {
 	 * Whether or not the {@link OwfsClient} instance should be thread safe. If the client will only be used by one
 	 * thread, this can be turned off to increase performance, even though the performance increase will probably be
 	 * minimal.
-	 *
 	 * @param hostname
 	 * @param port
 	 * @return
@@ -73,26 +64,21 @@ public class OwfsClientFactory {
 
 	/**
 	 * Creates a new {@link OwfsClient} instance.
-	 *
-	 * @param rootPath A file path to the root directory of the 1-wire file system,
-	 *                 e.g. <strong>&quot;/mnt/1wire&quot;</strong> or
-	 *                 <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
+	 * @param rootPath A file path to the root directory of the 1-wire file system, e.g. <strong>&quot;/mnt/1wire&quot;</strong> or
+	 *                    <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
 	 * @return a new {@link OwfsClient} instance.
 	 */
 	public static OwfsClient newOwfsClient(String rootPath) {
 		return new OwfsClientRegularFs(rootPath);
 	}
 
-	public void setHostName(String hostName) {
+	public OwfsClientFactory(String hostName, int portNumber) {
 		this.hostName = hostName;
+		this.portNumber = portNumber;
 	}
 
 	public String getHostName() {
 		return hostName;
-	}
-
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
 	}
 
 	public int getPortNumber() {
@@ -100,6 +86,11 @@ public class OwfsClientFactory {
 	}
 
 	public OwfsClient createNewConnection() {
-		return OwfsClientFactory.newOwfsClient(hostName, portNumber);
+		OwfsClient client = OwfsClientFactory.newOwfsClient(hostName, portNumber);
+		client.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
+		client.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
+		client.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
+		return client;
 	}
 }

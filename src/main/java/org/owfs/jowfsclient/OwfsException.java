@@ -9,7 +9,6 @@ package org.owfs.jowfsclient;
 
 /**
  * This exception represents errors returned by the owserver.
- *
  * @author Patrik Akerfeldt
  */
 public class OwfsException extends Exception {
@@ -18,8 +17,6 @@ public class OwfsException extends Exception {
 	private final int errorCode;
 
 	/**
-	 * Constructs a new {@code OwfsException}.
-	 *
 	 * @param message   a descriptive message of the error occurred.
 	 * @param errorCode the error code received from owserver.
 	 */
@@ -28,11 +25,6 @@ public class OwfsException extends Exception {
 		this.errorCode = errorCode;
 	}
 
-	/**
-	 * Returns the error code associated with this exception.
-	 *
-	 * @return the error code associated with this exception.
-	 */
 	public int getErrorCode() {
 		return errorCode;
 	}

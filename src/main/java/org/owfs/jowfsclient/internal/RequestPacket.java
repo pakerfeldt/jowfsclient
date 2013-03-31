@@ -41,6 +41,7 @@ public class RequestPacket extends Packet {
 		for (; i < bytes.length; i++) {
 			this.payload[i] = bytes[i];
 		}
+		//TODO can be removed since arrays are already initialized
 		this.payload[i] = 0;
 
 	}

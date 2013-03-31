@@ -64,7 +64,7 @@ public class AlarmingDevicesReaderTest {
 		List<String> strings = Arrays.asList("/alarm/T1", "/alarm/T2");
 
 		//when
-		ArrayList<String> fixed = new AlarmingDevicesReader(null).rebuildDevicesListWithoutDirectoryPath(strings);
+		List<String> fixed = new AlarmingDevicesReader(null).rebuildDevicesListWithoutDirectoryPath(strings);
 
 		//then
 		Assert.assertEquals(Arrays.asList("T1", "T2"),fixed);

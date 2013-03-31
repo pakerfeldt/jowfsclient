@@ -52,17 +52,7 @@ public class OwfsClientTest {
 
 	@BeforeMethod
 	public void constructOwfsClient() {
-		OwfsClientFactory owfsClientFactory = new OwfsClientFactory();
-		owfsClientFactory.setHostName(owfsHostname);
-		owfsClientFactory.setPortNumber(owfsPort);
+		OwfsClientFactory owfsClientFactory = new OwfsClientFactory(owfsHostname,owfsPort);
 		client = owfsClientFactory.createNewConnection();
-		configureClient();
-	}
-
-	private void configureClient() {
-		client.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
-		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
-		client.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-		client.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
 	}
 }

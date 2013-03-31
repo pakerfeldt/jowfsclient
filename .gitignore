@@ -6,3 +6,4 @@ target/
 .idea
 *.iml
 testng-integration.properties
+atlassian-ide-plugin.xml

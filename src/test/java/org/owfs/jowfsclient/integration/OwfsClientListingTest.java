@@ -2,6 +2,7 @@ package org.owfs.jowfsclient.integration;
 
 import java.io.IOException;
 import java.util.List;
+import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.slf4j.Logger;
@@ -18,13 +19,24 @@ public class OwfsClientListingTest extends OwfsClientTest {
 	private static final Logger log = LoggerFactory.getLogger(OwfsClientListingTest.class);
 
 	@Test
+	public void shouldListAlarmDirectiories() throws Exception {
+		listDirectory("/alarm");
+	}
+
+	@Test
 	public void shouldListDirectiories() throws Exception {
-		List<String> directories = client.listDirectoryAll("/");
+		listDirectory("/");
+	}
+
+	private void listDirectory(String path) throws OwfsException, IOException {
+		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
+		List<String> directories = client.listDirectoryAll(path);
 		for (String dir : directories) {
-			log.info(dir);
+			log.info("DIR-> "+dir);
 			List<String> subdirectories = client.listDirectoryAll(dir);
 			for (String subdir : subdirectories) {
-				tryToReadAndLogPathValue(subdir);
+				log.info("\t SUBDIR-> "+dir);
+//				tryToReadAndLogPathValue(subdir);
 			}
 		}
 		client.disconnect();
@@ -36,6 +48,11 @@ public class OwfsClientListingTest extends OwfsClientTest {
 		} catch (OwfsException e) {
 			log.info("\t" + subdir + "\t: DIRECTORY");
 		}
+	}
+
+	@Test
+	public void should() {
+		log.info("XXX"+(~5));
 	}
 }
 

@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 
 public class AlarmingDevicesReader implements Runnable {
 	private static final Logger log = LoggerFactory.getLogger(AlarmingDevicesReader.class);
-	public static final String ALARM_FOLDER_FOR_OWFS_SERVER = "/alarm";
+
+	public static final String ALARM_FOLDER_FOR_OWFS_SERVER = "/alarm/";
 	public static final String ALARM_FOLDER_FOR_OWFS_SERVER_TO_REMOVE = ALARM_FOLDER_FOR_OWFS_SERVER+"/";
 
 	private OwfsClient client;
@@ -30,22 +31,27 @@ public class AlarmingDevicesReader implements Runnable {
 	void tryToReadAlarmingDirectory() {
 		try {
 			readAlarmingDirectory();
-		} catch (OwfsException e) {
-			log.warn("owfsClientNotAvailable", e);
-		} catch (IOException e) {
-			log.warn("owfsClientNotAvailable", e);
+		} catch (Exception e) {
+			handleConnectionException(e);
 		}
 	}
 
 	private void readAlarmingDirectory() throws OwfsException, IOException {
 		List<String> read = client.listDirectoryAll(ALARM_FOLDER_FOR_OWFS_SERVER);
 		if (!read.isEmpty()) {
-			ArrayList<String> strings = rebuildDevicesListWithoutDirectoryPath(read);
+			List<String> strings = rebuildDevicesListWithoutDirectoryPath(read);
 			listener.alarmForDevices(strings);
 		}
 	}
 
-	ArrayList<String> rebuildDevicesListWithoutDirectoryPath(List<String> read) {
+	private void handleConnectionException(Exception e) {
+		log.warn("owfsClientNotAvailable", e);
+		if (client != null) {
+			client = null;
+		}
+	}
+
+	List<String> rebuildDevicesListWithoutDirectoryPath(List<String> read) {
 		ArrayList<String> strings = new ArrayList<String>();
 		for (String s : read) {
 			strings.add(s.substring(ALARM_FOLDER_FOR_OWFS_SERVER_TO_REMOVE.length()));

@@ -7,8 +7,8 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * OwfsClientFactory that executes all methods utilizing ReentrantLock.
  * @author Tom Kucharski
- * @since 12/7/12 10:32 PM
  */
 public class OwfsClientThreadSafeFactory {
 
