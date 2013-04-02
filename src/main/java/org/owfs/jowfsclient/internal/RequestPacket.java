@@ -78,40 +78,18 @@ public class RequestPacket extends Packet {
 
 	}
 
-	/**
-	 * Returns the payload as a {@code byte} array.
-	 *
-	 * @return the payload as a {@code byte} array.
-	 */
 	public byte[] getPayload() {
 		return payload;
 	}
 
-	/**
-	 * Returns true if the packet is supposed to write something to an owserver
-	 * element, otherwise false.
-	 *
-	 * @return true if the packet is supposed to write something to an owserver
-	 *         element, otherwise false.
-	 */
 	public boolean isWritingData() {
 		return writingData;
 	}
 
-	/**
-	 * Returns the {@code OwMessageType} from the packet.
-	 *
-	 * @return the {@code OwMessageType} from the packet.
-	 */
 	public OwMessageType getFunction() {
 		return OwMessageType.getEnum(getHeader().getFunction());
 	}
 
-	/**
-	 * Returns the data, as a {@code byte} array that is to be written.
-	 *
-	 * @return the data, as a {@code byte} array that is to be written.
-	 */
 	public byte[] getDataToWrite() {
 		return dataToWrite;
 	}

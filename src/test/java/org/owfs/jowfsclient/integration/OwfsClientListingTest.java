@@ -1,5 +1,7 @@
 package org.owfs.jowfsclient.integration;
 
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 import org.owfs.jowfsclient.Enums;
@@ -13,10 +15,16 @@ import org.testng.annotations.Test;
  * @author Tom Kucharski
  * @since 12/8/12 11:32 PM
  */
-@Test(groups = TestNGGroups.INTEGRATION)
+@Test(groups = TestNGGroups.INTEGRATION_MANUAL)
 public class OwfsClientListingTest extends OwfsClientTest {
 
 	private static final Logger log = LoggerFactory.getLogger(OwfsClientListingTest.class);
+
+	@Test
+	public void shouldShowDirNotExist() throws IOException, OwfsException {
+		Boolean exists = client.exists("/alarming");
+		assertTrue(exists);
+	}
 
 	@Test
 	public void shouldListAlarmDirectiories() throws Exception {
@@ -30,13 +38,13 @@ public class OwfsClientListingTest extends OwfsClientTest {
 
 	private void listDirectory(String path) throws OwfsException, IOException {
 		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
-		List<String> directories = client.listDirectoryAll(path);
+		List<String> directories = client.listDirectory(path);
 		for (String dir : directories) {
-			log.info("DIR-> "+dir);
-			List<String> subdirectories = client.listDirectoryAll(dir);
+			log.info("DIR-> " + dir);
+			List<String> subdirectories = client.listDirectory(dir);
 			for (String subdir : subdirectories) {
-				log.info("\t SUBDIR-> "+dir);
-//				tryToReadAndLogPathValue(subdir);
+				log.info("\t SUBDIR-> " + dir);
+				tryToReadAndLogPathValue(subdir);
 			}
 		}
 		client.disconnect();
@@ -52,7 +60,7 @@ public class OwfsClientListingTest extends OwfsClientTest {
 
 	@Test
 	public void should() {
-		log.info("XXX"+(~5));
+		log.info("XXX" + (~5));
 	}
 }
 

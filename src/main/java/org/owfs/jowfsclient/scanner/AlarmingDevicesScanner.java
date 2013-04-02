@@ -1,4 +1,4 @@
-package org.owfs.jowfsclient;
+package org.owfs.jowfsclient.scanner;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;

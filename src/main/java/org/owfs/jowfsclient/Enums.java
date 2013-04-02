@@ -11,6 +11,7 @@ package org.owfs.jowfsclient;
  * This class contains different types of {@code enum}s used by the OwfsClient when
  * communicating with owserver.
  * http://owfs.org/index.php?page=owserver-flag-word
+ *
  * @author Patrik Akerfeldt
  */
 public class Enums {
@@ -50,6 +51,7 @@ public class Enums {
 	/**
 	 * Defines the different display formats that owserver supports.
 	 * F = family, I = identity, C = CRC
+	 * Explanation here: http://owfs.org/uploads/owpresent.html#sect27
 	 */
 	public static enum OwDeviceDisplayFormat {
 		OWNET_DDF_F_DOT_I(0x00000000),

@@ -32,20 +32,10 @@ public class Header {
 		this.offset = offset;
 	}
 
-	/**
-	 * Returns the version field in the header
-	 *
-	 * @return the version field in the header
-	 */
 	public int getVersion() {
 		return version;
 	}
 
-	/**
-	 * Returns the length of the payload
-	 *
-	 * @return the payload length field in the header
-	 */
 	public int getPayloadLength() {
 		return payloadLength;
 	}
@@ -60,29 +50,14 @@ public class Header {
 		return function;
 	}
 
-	/**
-	 * Returns a Flags representation of the flags field in the header.
-	 *
-	 * @return a Flags representation of the flags field in the header.
-	 */
 	public Flags getFlags() {
 		return flags;
 	}
 
-	/**
-	 * Returns the data length field in the header.
-	 *
-	 * @return the data length field in the header.
-	 */
 	public int getDataLength() {
 		return dataLength;
 	}
 
-	/**
-	 * Returns the offset field in the header.
-	 *
-	 * @return the offset field in the header.
-	 */
 	public int getOffset() {
 		return offset;
 	}

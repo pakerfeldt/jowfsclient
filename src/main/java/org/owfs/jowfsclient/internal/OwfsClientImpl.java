@@ -108,17 +108,8 @@ public class OwfsClientImpl implements OwfsClient {
 		}
 	}
 
-	/**
-	 * Establishes a connection to the owserver if needed, i.e. if no {@code
-	 * Socket} exists, {@code Socket}. Returns true if connection is
-	 * established.
-	 *
-	 * @throws IOException if an I/O error occurs.
-	 */
-	private void establishConnection() throws IOException {
-		if (owSocket == null
-				|| !owSocket.isConnected()
-				|| !(flags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON)) {
+	private void establishConnectionIfNeeded() throws IOException {
+		if (owSocket == null || !owSocket.isConnected() || !(flags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON)) {
 			connect(true);
 		}
 	}
@@ -184,7 +175,6 @@ public class OwfsClientImpl implements OwfsClient {
 		* bytes but also in order to throw exceptions on error.
 		*/
 		readPacket();
-
 		disconnectIfConfigured();
 	}
 
@@ -208,50 +198,43 @@ public class OwfsClientImpl implements OwfsClient {
 		* readPacket(). Check what message are returned on error and what
 		* are return when device does not exist.
 		*/
+		//TODO Refactor readPacket() <- more information there
 		return response.getHeader().getFunction() >= 0;
 
 	}
 
+	/**
+	 * This method is not working properly for alarming directory.
+	 */
 	@Override
 	public List<String> listDirectoryAll(String path) throws OwfsException, IOException {
-		List<String> list = new ArrayList<String>();
 		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIRALL, 0, flags, path);
 		sendRequest(request);
 		ResponsePacket response = readPacket();
+		List<String> list = new ArrayList<String>();
 		if (response != null && response.getPayload() != null) {
 			String[] arr = response.getPayload().split(",");
 			Collections.addAll(list, arr);
 		}
-
 		disconnectIfConfigured();
 		return list;
 	}
 
 	@Override
 	public List<String> listDirectory(String path) throws OwfsException, IOException {
-		List<String> list = new ArrayList<String>();
 		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIR, 0, flags, path);
-
 		sendRequest(request);
-
 		ResponsePacket response;
+		List<String> list = new ArrayList<String>();
 		while ((response = readPacket()) != null && response.getHeader().getPayloadLength() != 0) {
 			list.add(response.getPayload());
 		}
-
 		disconnectIfConfigured();
 		return list;
 	}
 
-	/**
-	 * Sends a request to the owserver.
-	 *
-	 * @param packet the {@link RequestPacket} to send.
-	 * @throws IOException
-	 */
 	private void sendRequest(RequestPacket packet) throws IOException {
-		establishConnection();
-
+		establishConnectionIfNeeded();
 		/*
 		* TODO: Should we check that there is no data in the DataInputStream before sending our request?
 		* / Send header
@@ -292,6 +275,7 @@ public class OwfsClientImpl implements OwfsClient {
 		}
 		Flags returnFlags = new Flags(rawHeader[3]);
 		/* Grant/deny persistence */
+		//TODO extractMethod
 		if (returnFlags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
 			flags.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
 		} else {
@@ -315,9 +299,11 @@ public class OwfsClientImpl implements OwfsClient {
 				}
 			}
 		} else {
+			//TODO Always return ResponsePacket and interpret its attributes to get if there is exception thrown or not.
 			/* Error received */
 			throw new OwfsException("Error " + rawHeader[2], rawHeader[2]);
 		}
+		//TODO Flags obeject is reduntantly created
 		return new ResponsePacket(rawHeader[0], rawHeader[1], rawHeader[2], new Flags(rawHeader[3]), rawHeader[4], rawHeader[5], payload);
 	}
 }

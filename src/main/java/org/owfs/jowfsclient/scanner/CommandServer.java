@@ -1,6 +1,5 @@
-package org.owfs.jowfsclient;
+package org.owfs.jowfsclient.scanner;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

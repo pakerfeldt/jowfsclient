@@ -1,16 +1,14 @@
 package org.owfs.jowfsclient.integration;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.IOException;
-import java.util.List;
-import org.owfs.jowfsclient.AlarmingDevicesListener;
-import org.owfs.jowfsclient.AlarmingDevicesReader;
-import org.owfs.jowfsclient.AlarmingDevicesScanner;
 import org.owfs.jowfsclient.OwfsClient;
 import org.owfs.jowfsclient.OwfsClientFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
+import org.owfs.jowfsclient.scanner.AlarmingDeviceEvent;
+import org.owfs.jowfsclient.scanner.AlarmingDevicesListener;
+import org.owfs.jowfsclient.scanner.AlarmingDevicesReader;
+import org.owfs.jowfsclient.scanner.AlarmingDevicesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Parameters;
@@ -30,20 +28,23 @@ public class AlarmingDevicesScannerTest {
 			TestNGIntegrationProperties.OWFS_PORT,
 			TestNGIntegrationProperties.OWFS_DEVICE_DS2408_INPUT
 	})
-	public void shouldReceiveAtLeastOneMessage(String hostName,int port, String inputDevice) throws InterruptedException, IOException, OwfsException {
-		OwfsClientFactory factory = new OwfsClientFactory(hostName,port);
+	@Test
+	public void shouldReceiveAtLeastOneMessage(String hostName, int port, String inputDevice) throws InterruptedException, IOException, OwfsException {
+		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
 
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
+		alarmingDevicesReader.addObservableDevice(inputDevice);
 		alarmingDevicesReader.setAlarmListener(new AlarmingDevicesListener() {
 			@Override
-			public void alarmForDevices(List<String> devices) {
-				log.info("Alarming devices: "+devices);
+			public void alarmForDevices(AlarmingDeviceEvent event) {
+				log.info("Alarming devices: " + event);
 			}
 		});
 		AlarmingDevicesScanner alarmingDevicesScanner = new AlarmingDevicesScanner(alarmingDevicesReader);
 
 		OwfsClient connection = factory.createNewConnection();
-		connection.write(inputDevice+"/set_alarm","133333333");
+		connection.write(inputDevice + "/set_alarm", "133333333");
+		connection.write(inputDevice + "/por", "0");
 
 		alarmingDevicesScanner.init();
 		doManualAction();

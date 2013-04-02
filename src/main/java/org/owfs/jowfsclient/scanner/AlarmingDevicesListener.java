@@ -1,6 +1,4 @@
-package org.owfs.jowfsclient;
-
-import java.util.List;
+package org.owfs.jowfsclient.scanner;
 
 /**
  * @author Tomasz Kucharski <kucharski.tom@gmail.com>
@@ -8,5 +6,5 @@ import java.util.List;
  */
 public interface AlarmingDevicesListener {
 
-	void alarmForDevices(List<String> devices);
+	void alarmForDevices(AlarmingDeviceEvent event);
 }

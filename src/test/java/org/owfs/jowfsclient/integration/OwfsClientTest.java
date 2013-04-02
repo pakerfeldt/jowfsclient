@@ -1,6 +1,5 @@
 package org.owfs.jowfsclient.integration;
 
-import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsClient;
 import org.owfs.jowfsclient.OwfsClientFactory;
 import org.owfs.jowfsclient.TestNGGroups;
@@ -52,7 +51,7 @@ public class OwfsClientTest {
 
 	@BeforeMethod
 	public void constructOwfsClient() {
-		OwfsClientFactory owfsClientFactory = new OwfsClientFactory(owfsHostname,owfsPort);
+		OwfsClientFactory owfsClientFactory = new OwfsClientFactory(owfsHostname, owfsPort);
 		client = owfsClientFactory.createNewConnection();
 	}
 }

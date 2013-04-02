@@ -1,4 +1,4 @@
-package org.owfs.jowfsclient;
+package org.owfs.jowfsclient.learning;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -12,6 +12,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.owfs.jowfsclient.TestNGGroups;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

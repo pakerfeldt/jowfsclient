@@ -31,13 +31,7 @@ public abstract class Packet {
 		header = new Header(version, payloadLength, function, flags, dataLength, offset);
 	}
 
-	/**
-	 * Returns the {@link Header} of this packet.
-	 *
-	 * @return the {@link Header} of this packet.
-	 */
 	public Header getHeader() {
 		return header;
 	}
-
 }

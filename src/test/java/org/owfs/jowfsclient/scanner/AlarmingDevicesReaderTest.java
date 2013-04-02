@@ -1,5 +1,6 @@
-package org.owfs.jowfsclient;
+package org.owfs.jowfsclient.scanner;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -8,8 +9,10 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsClientFactory;
+import org.owfs.jowfsclient.OwfsException;
+import org.owfs.jowfsclient.TestNGGroups;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -20,9 +23,9 @@ import org.testng.annotations.Test;
 @Test(groups = TestNGGroups.UNIT)
 public class AlarmingDevicesReaderTest {
 
-	public static final List<String> DEVICES = Arrays.asList("XXX", "YYY");
+	public static final String DEVICE = "XXX";
 
-	public void shouldConnectIfNecessary() {
+	public void shouldReuseExistingConnection() {
 		//given
 		OwfsClientFactory factory = mock(OwfsClientFactory.class);
 		when(factory.createNewConnection()).thenReturn(mock(OwfsClient.class));
@@ -40,6 +43,7 @@ public class AlarmingDevicesReaderTest {
 		//given
 		OwfsClientFactory factory = createListingDirsOwfsClientFactory();
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
+		alarmingDevicesReader.addObservableDevice(DEVICE);
 		AlarmingDevicesListener alarmingDevicesListener = mock(AlarmingDevicesListener.class);
 		alarmingDevicesReader.setAlarmListener(alarmingDevicesListener);
 
@@ -47,7 +51,7 @@ public class AlarmingDevicesReaderTest {
 		alarmingDevicesReader.run();
 
 		//then
-		verify(alarmingDevicesListener, times(1)).alarmForDevices(DEVICES);
+		verify(alarmingDevicesListener, times(1)).alarmForDevices(any(AlarmingDeviceEvent.class));
 
 	}
 
@@ -55,21 +59,22 @@ public class AlarmingDevicesReaderTest {
 		OwfsClientFactory factory = mock(OwfsClientFactory.class);
 		OwfsClient mock = mock(OwfsClient.class);
 		when(factory.createNewConnection()).thenReturn(mock);
-		when(mock.listDirectoryAll(anyString())).thenReturn(DEVICES);
+		ArrayList arrayList = new ArrayList();
+		arrayList.add("/alarm/" + DEVICE);
+		when(mock.listDirectory(anyString())).thenReturn(arrayList);
 		return factory;
 	}
 
 	public void shouldRebuildDevicesListWithoutDirectoryPath() {
 		//given
-		List<String> strings = Arrays.asList("/alarm/T1", "/alarm/T2");
+		String devicePath = "/alarm/T1";
 
 		//when
-		List<String> fixed = new AlarmingDevicesReader(null).rebuildDevicesListWithoutDirectoryPath(strings);
+		String deviceName = new AlarmingDevicesReader(null).extractDeviceNameFromDevicePath(devicePath);
 
 		//then
-		Assert.assertEquals(Arrays.asList("T1", "T2"),fixed);
+		Assert.assertEquals("T1", deviceName);
 	}
-
 
 
 }
