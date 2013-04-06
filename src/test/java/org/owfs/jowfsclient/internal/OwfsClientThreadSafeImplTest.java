@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 import org.mockito.InOrder;
 import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientThreadSafeFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.testng.annotations.BeforeMethod;
@@ -20,7 +19,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author Tom Kucharski
- * @since 12/7/12 10:30 PM
  */
 @Test(groups = TestNGGroups.UNIT)
 public class OwfsClientThreadSafeImplTest {

@@ -8,8 +8,7 @@
 package org.owfs.jowfsclient;
 
 /**
- * This class contains different types of {@code enum}s used by the OwfsClient when
- * communicating with owserver.
+ * This class contains different types of {@code enum}s used by the OwfsClient when communicating with owserver.
  * http://owfs.org/index.php?page=owserver-flag-word
  *
  * @author Patrik Akerfeldt

@@ -4,7 +4,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
-import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author Tom Kucharski
- * @since 12/8/12 11:32 PM
  */
 @Test(groups = TestNGGroups.INTEGRATION_MANUAL)
 public class OwfsClientListingTest extends OwfsClientTest {
@@ -37,7 +35,6 @@ public class OwfsClientListingTest extends OwfsClientTest {
 	}
 
 	private void listDirectory(String path) throws OwfsException, IOException {
-		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
 		List<String> directories = client.listDirectory(path);
 		for (String dir : directories) {
 			log.info("DIR-> " + dir);

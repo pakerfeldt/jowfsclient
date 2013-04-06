@@ -7,19 +7,20 @@
  *******************************************************************************/
 package org.owfs.jowfsclient.internal;
 
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsClientConfig;
 import org.owfs.jowfsclient.OwfsException;
 
 /**
@@ -30,7 +31,6 @@ import org.owfs.jowfsclient.OwfsException;
  */
 public class OwfsClientImpl implements OwfsClient {
 
-	private static final int OWNET_REQUEST = 0x00000100; // default flag
 	private static final int OWNET_DEFAULT_DATALEN = 4096; // default data
 	// length
 	private String hostname;
@@ -38,8 +38,7 @@ public class OwfsClientImpl implements OwfsClient {
 	private Socket owSocket;
 	private DataInputStream owIn;
 	private DataOutputStream owOut;
-	private Flags flags = new Flags(OWNET_REQUEST);
-	private int connectionTimeout = 4000; // default to 4s timeout
+	private OwfsClientConfig config;
 
 	/**
 	 * Constructs a new OwClient with the specified connection details.
@@ -47,7 +46,7 @@ public class OwfsClientImpl implements OwfsClient {
 	 * @param hostname A {@link String} representation of the hostname to connect to.
 	 * @param port     The port to connect to, which owserver listens to.
 	 */
-	public OwfsClientImpl(String hostname, Integer port) {
+	public OwfsClientImpl(String hostname, Integer port, OwfsClientConfig config) {
 		this.hostname = hostname;
 		this.port = port;
 	}
@@ -63,23 +62,12 @@ public class OwfsClientImpl implements OwfsClient {
 	 */
 	private boolean connect(boolean force) throws IOException {
 		if (force) {
-			if (owIn != null) {
-				owIn.close();
-				owIn = null;
-			}
-			if (owOut != null) {
-				owOut.close();
-				owOut = null;
-			}
-			if (owSocket != null) {
-				owSocket.close();
-				owSocket = null;
-			}
+			closeSocketAndDataStreams();
 		}
 		if (owSocket == null || !owSocket.isConnected()) {
 			owSocket = new Socket();
 			try {
-				owSocket.connect(new InetSocketAddress(hostname, port), connectionTimeout);
+				owSocket.connect(new InetSocketAddress(hostname, port), config.getConnectionTimeout());
 			} catch (SocketTimeoutException ste) {
 				owSocket = null;
 				return false;
@@ -94,67 +82,44 @@ public class OwfsClientImpl implements OwfsClient {
 
 	@Override
 	public void disconnect() throws IOException {
-		if (owIn != null) {
-			owIn.close();
-			owIn = null;
-		}
-		if (owOut != null) {
-			owOut.close();
-			owOut = null;
-		}
-		if (owSocket != null) {
-			owSocket.close();
-			owSocket = null;
+		closeSocketAndDataStreams();
+	}
+
+	private void closeSocketAndDataStreams() throws IOException {
+		close(owSocket);
+		owSocket = null;
+		close(owOut);
+		owOut = null;
+		close(owIn);
+		owIn = null;
+	}
+
+	private void close(Closeable closeable) throws IOException {
+		if (closeable != null) {
+			closeable.close();
 		}
 	}
 
 	private void establishConnectionIfNeeded() throws IOException {
-		if (owSocket == null || !owSocket.isConnected() || !(flags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON)) {
+		if (owSocket == null || !owSocket.isConnected() || !isPersistenceEnabled()) {
 			connect(true);
 		}
 	}
 
-	@Override
-	public void setTimeout(int timeout) {
-		connectionTimeout = timeout;
-		if (owSocket != null && !owSocket.isClosed()) {
-			try {
-				owSocket.setSoTimeout(connectionTimeout);
-				//SUPPRESS CHECKSTYLE EmptyBlock
-			} catch (SocketException ignored) {
-			}
+	private void disconnectIfConfigured() throws IOException {
+		if (!isPersistenceEnabled()) {
+			disconnect();
 		}
 	}
 
-	@Override
-	public void setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat deviceDisplay) {
-		flags.setDeviceDisplayFormat(deviceDisplay);
-	}
-
-	@Override
-	public void setTemperatureScale(Enums.OwTemperatureScale tempScale) {
-		flags.setTemperatureScale(tempScale);
-	}
-
-	@Override
-	public void setPersistence(Enums.OwPersistence persistence) {
-		flags.setPersistence(persistence);
-	}
-
-	@Override
-	public void setAlias(Enums.OwAlias alias) {
-		flags.setAlias(alias);
-	}
-
-	@Override
-	public void setBusReturn(Enums.OwBusReturn busReturn) {
-		flags.setBusReturn(busReturn);
+	private boolean isPersistenceEnabled() {
+		return config.getFlags().getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON;
 	}
 
 	@Override
 	public String read(String path) throws IOException, OwfsException {
 		ResponsePacket response;
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_READ, OWNET_DEFAULT_DATALEN, flags, path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_READ, OWNET_DEFAULT_DATALEN, config.getFlags(), path);
 		sendRequest(request);
 		do {
 			response = readPacket();
@@ -167,7 +132,7 @@ public class OwfsClientImpl implements OwfsClient {
 
 	@Override
 	public void write(String path, String dataToWrite) throws IOException, OwfsException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_WRITE, flags, path, dataToWrite);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_WRITE, config.getFlags(), path, dataToWrite);
 		sendRequest(request);
 		/*
 		* Even if we're not interested in the result of the response packet
@@ -178,16 +143,10 @@ public class OwfsClientImpl implements OwfsClient {
 		disconnectIfConfigured();
 	}
 
-	private void disconnectIfConfigured() throws IOException {
-		if (flags.getPersistence() != Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
-			disconnect();
-		}
-	}
-
 	@Override
 	public Boolean exists(String path) throws IOException, OwfsException {
 		ResponsePacket response;
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_PRESENCE, 0, flags, path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_PRESENCE, 0, config.getFlags(), path);
 		sendRequest(request);
 		response = readPacket();
 
@@ -208,7 +167,7 @@ public class OwfsClientImpl implements OwfsClient {
 	 */
 	@Override
 	public List<String> listDirectoryAll(String path) throws OwfsException, IOException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIRALL, 0, flags, path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIRALL, 0, config.getFlags(), path);
 		sendRequest(request);
 		ResponsePacket response = readPacket();
 		List<String> list = new ArrayList<String>();
@@ -222,7 +181,7 @@ public class OwfsClientImpl implements OwfsClient {
 
 	@Override
 	public List<String> listDirectory(String path) throws OwfsException, IOException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIR, 0, flags, path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIR, 0, config.getFlags(), path);
 		sendRequest(request);
 		ResponsePacket response;
 		List<String> list = new ArrayList<String>();
@@ -273,14 +232,7 @@ public class OwfsClientImpl implements OwfsClient {
 		} catch (EOFException e) {
 			return null;
 		}
-		Flags returnFlags = new Flags(rawHeader[3]);
-		/* Grant/deny persistence */
-		//TODO extractMethod
-		if (returnFlags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
-			flags.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-		} else {
-			flags.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_OFF);
-		}
+		grantOrDenyPersistence(rawHeader[3]);
 		String payload = null;
 		if (rawHeader[2] >= 0) { /* Check return value */
 			if (rawHeader[1] >= 0) { /* Bytes to read */
@@ -305,5 +257,14 @@ public class OwfsClientImpl implements OwfsClient {
 		}
 		//TODO Flags obeject is reduntantly created
 		return new ResponsePacket(rawHeader[0], rawHeader[1], rawHeader[2], new Flags(rawHeader[3]), rawHeader[4], rawHeader[5], payload);
+	}
+
+	private void grantOrDenyPersistence(int value) {
+		Flags returnFlags = new Flags(value);
+		if (returnFlags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
+			config.getFlags().setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+		} else {
+			config.getFlags().setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_OFF);
+		}
 	}
 }

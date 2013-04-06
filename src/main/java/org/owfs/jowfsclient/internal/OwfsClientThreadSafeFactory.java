@@ -1,13 +1,15 @@
-package org.owfs.jowfsclient;
+package org.owfs.jowfsclient.internal;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.locks.ReentrantLock;
+import org.owfs.jowfsclient.OwfsClient;
 
 /**
  * OwfsClientFactory that executes all methods utilizing ReentrantLock.
+ *
  * @author Tom Kucharski
  */
 public class OwfsClientThreadSafeFactory {

@@ -9,11 +9,6 @@ package org.owfs.jowfsclient;
 
 import java.io.IOException;
 import java.util.List;
-import org.owfs.jowfsclient.Enums.OwAlias;
-import org.owfs.jowfsclient.Enums.OwBusReturn;
-import org.owfs.jowfsclient.Enums.OwDeviceDisplayFormat;
-import org.owfs.jowfsclient.Enums.OwPersistence;
-import org.owfs.jowfsclient.Enums.OwTemperatureScale;
 
 public interface OwfsClient {
 
@@ -23,52 +18,6 @@ public interface OwfsClient {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	void disconnect() throws IOException;
-
-	/**
-	 * Sets the timeout on the TCP connection with owserver.
-	 *
-	 * @param timeout timeout in milliseconds.
-	 */
-	void setTimeout(int timeout);
-
-	/**
-	 * Sets the format in which devices will be displayed.
-	 *
-	 * @param deviceDisplay the new {@link OwDeviceDisplayFormat}.
-	 */
-	void setDeviceDisplayFormat(OwDeviceDisplayFormat deviceDisplay);
-
-	/**
-	 * Sets the temperature scale that owserver should return temperature values
-	 * in.
-	 *
-	 * @param tempScale the new {@link OwTemperatureScale} value.
-	 */
-	void setTemperatureScale(OwTemperatureScale tempScale);
-
-	/**
-	 * Set whether or not persistent connection should be requested. Note that
-	 * this does not necessarily mean that a persistent connection will be
-	 * established with owserver. This will only happen if owserver grants that
-	 * request.
-	 *
-	 * @param persistence the new {@link OwPersistence} value
-	 */
-	void setPersistence(OwPersistence persistence);
-
-	/**
-	 * Sets whether or not to use aliases for known slaves.
-	 *
-	 * @param alias the new {@link OwAlias} value.
-	 */
-	void setAlias(OwAlias alias);
-
-	/**
-	 * Sets whether or not to include special directories on directory listing.
-	 *
-	 * @param busReturn the new {@link OwBusReturn} value.
-	 */
-	void setBusReturn(OwBusReturn busReturn);
 
 	/**
 	 * Reads the value from the specified entity.

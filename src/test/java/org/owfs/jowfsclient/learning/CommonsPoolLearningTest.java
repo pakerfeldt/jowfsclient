@@ -17,8 +17,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
- * @since 06.03.13 01:13
+ * @author Tom Kucharski
  */
 @Test(groups = TestNGGroups.LEARNING)
 public class CommonsPoolLearningTest {

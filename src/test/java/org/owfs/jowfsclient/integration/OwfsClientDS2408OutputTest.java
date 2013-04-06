@@ -9,7 +9,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author Tom Kucharski
- * @since 12/8/12 11:29 PM
  */
 @Test(groups = TestNGGroups.INTEGRATION)
 public class OwfsClientDS2408OutputTest extends OwfsClientTest {

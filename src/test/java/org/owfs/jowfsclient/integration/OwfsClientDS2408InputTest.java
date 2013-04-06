@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author Tom Kucharski
- * @since 12/8/12 11:29 PM
  */
 public class OwfsClientDS2408InputTest extends OwfsClientTest {
 	private static final Logger log = LoggerFactory.getLogger(OwfsClientDS2408InputTest.class);

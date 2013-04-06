@@ -1,27 +1,23 @@
 package org.owfs.jowfsclient.integration;
 
 import java.io.IOException;
-import org.owfs.jowfsclient.OwfsClient;
 import org.owfs.jowfsclient.OwfsClientFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
-import org.owfs.jowfsclient.scanner.AlarmingDeviceEvent;
-import org.owfs.jowfsclient.scanner.AlarmingDevicesListener;
-import org.owfs.jowfsclient.scanner.AlarmingDevicesReader;
-import org.owfs.jowfsclient.scanner.AlarmingDevicesScanner;
+import org.owfs.jowfsclient.alarm.AlarmingDevicesReader;
+import org.owfs.jowfsclient.alarm.AlarmingDevicesScanner;
+import org.owfs.jowfsclient.alarm.SwitchAlarmingDeviceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
- * @since 11.03.13 00:42
+ * @author Tom Kucharski
  */
 @Test(groups = TestNGGroups.INTEGRATION_MANUAL)
 public class AlarmingDevicesScannerTest {
 	private static final Logger log = LoggerFactory.getLogger(AlarmingDevicesScannerTest.class);
-
 
 	@Parameters({
 			TestNGIntegrationProperties.OWFS_HOSTNAME,
@@ -33,26 +29,23 @@ public class AlarmingDevicesScannerTest {
 		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
 
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
-		alarmingDevicesReader.addObservableDevice(inputDevice);
-		alarmingDevicesReader.setAlarmListener(new AlarmingDevicesListener() {
+		SwitchAlarmingDeviceHandler ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceHandler("133333333") {
 			@Override
-			public void alarmForDevices(AlarmingDeviceEvent event) {
-				log.info("Alarming devices: " + event);
+			public void handleAlarm(String deviceName, String latchStatus, String sensedStatus) {
+				log.info("Alarm '" + deviceName + "' : latch:;" + latchStatus + "', sensed:'" + sensedStatus + "'");
 			}
-		});
+		};
+		alarmingDevicesReader.addObservableDevice(inputDevice, ds2408AlarmingDeviceHandler);
 		AlarmingDevicesScanner alarmingDevicesScanner = new AlarmingDevicesScanner(alarmingDevicesReader);
 
-		OwfsClient connection = factory.createNewConnection();
-		connection.write(inputDevice + "/set_alarm", "133333333");
-		connection.write(inputDevice + "/por", "0");
 
 		alarmingDevicesScanner.init();
-		doManualAction();
+		doManualAction(inputDevice);
 		alarmingDevicesScanner.shutdown();
 	}
 
-	private void doManualAction() throws InterruptedException {
-		log.info("set OwfsClientDS2408InputTest.OWFS_DEVICE_DS2408_INPUT in alarm mode, for example by set high on any input");
+	private void doManualAction(String inputDevice) throws InterruptedException {
+		log.info("set '" + inputDevice + "' in alarm mode, for example by set high on any input");
 		Thread.sleep(60000);
 	}
 }

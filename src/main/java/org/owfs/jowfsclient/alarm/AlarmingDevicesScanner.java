@@ -1,4 +1,4 @@
-package org.owfs.jowfsclient.scanner;
+package org.owfs.jowfsclient.alarm;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -6,8 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
- * @since 11.03.13 00:36
+ * @author Tom Kucharski
  */
 public class AlarmingDevicesScanner {
 	private static final Logger log = LoggerFactory.getLogger(AlarmingDevicesScanner.class);
@@ -25,13 +24,19 @@ public class AlarmingDevicesScanner {
 	}
 
 	public void init() {
-		log.info("Alarming devices scanner initialization...");
+		log.info("Alarming devices scanner initialization started.");
+		reader.initialize();
+		initializeRunningJob();
+		log.info("Alarming devices scanner initialization done.");
+	}
+
+	private void initializeRunningJob() {
 		scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(THREAD_POOL_SIZE);
 		scheduledThreadPoolExecutor.scheduleAtFixedRate(reader, INITIAL_DELAY, PERIOD, TimeUnit.MILLISECONDS);
 	}
 
 	public void shutdown() {
-		log.info("Alarming devices scanner stopped");
+		log.info("Alarming devices scanner stopped.");
 		scheduledThreadPoolExecutor.shutdown();
 	}
 }

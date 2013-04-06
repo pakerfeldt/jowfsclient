@@ -8,6 +8,7 @@
 package org.owfs.jowfsclient;
 
 import org.owfs.jowfsclient.internal.OwfsClientImpl;
+import org.owfs.jowfsclient.internal.OwfsClientThreadSafeFactory;
 import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
 
 /**
@@ -39,33 +40,35 @@ public class OwfsClientFactory {
 
 	private String hostName;
 	private int portNumber;
+	private OwfsClientConfig config;
 
 	/**
 	 * Creates a new {@link OwfsClient} instance.
+	 *
 	 * @param hostname A {@link String} representation of the hostname to connect to.
 	 * @param port     The port to connect to.
 	 * @return a new {@link OwfsClient} instance.
 	 */
-	public static OwfsClient newOwfsClient(String hostname, Integer port) {
-		return new OwfsClientImpl(hostname, port);
+	public static OwfsClient newOwfsClient(String hostname, Integer port, OwfsClientConfig config) {
+		return new OwfsClientImpl(hostname, port, config);
 	}
 
 	/**
-	 * Whether or not the {@link OwfsClient} instance should be thread safe. If the client will only be used by one
-	 * thread, this can be turned off to increase performance, even though the performance increase will probably be
-	 * minimal.
+	 * Thread safe {@link OwfsClient}
+	 *
 	 * @param hostname
 	 * @param port
 	 * @return
 	 */
-	public static OwfsClient newOwfsClientThreadSafe(String hostname, Integer port) {
-		return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(hostname, port));
+	public static OwfsClient newOwfsClientThreadSafe(String hostname, Integer port, OwfsClientConfig config) {
+		return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(hostname, port, config));
 	}
 
 	/**
 	 * Creates a new {@link OwfsClient} instance.
+	 *
 	 * @param rootPath A file path to the root directory of the 1-wire file system, e.g. <strong>&quot;/mnt/1wire&quot;</strong> or
-	 *                    <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
+	 *                 <strong>&quot;/var/1wire/simulated-fs&quot;</strong>
 	 * @return a new {@link OwfsClient} instance.
 	 */
 	public static OwfsClient newOwfsClient(String rootPath) {
@@ -86,11 +89,13 @@ public class OwfsClientFactory {
 	}
 
 	public OwfsClient createNewConnection() {
-		OwfsClient client = OwfsClientFactory.newOwfsClient(hostName, portNumber);
-		client.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
-		client.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
-		client.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-		client.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
-		return client;
+		if (config == null) {
+			config = new OwfsClientConfig();
+			config.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
+			config.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
+			config.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+			config.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
+		}
+		return new OwfsClientImpl(hostName, portNumber, config);
 	}
 }

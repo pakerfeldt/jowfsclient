@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
  * owfs.device.ds2408.input=29.DD940B00000091
  *
  * @author Tom Kucharski
- * @since 12/6/12 11:56 PM
  */
 @Test(groups = TestNGGroups.INTEGRATION)
 public class OwfsClientTest {

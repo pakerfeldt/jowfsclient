@@ -15,11 +15,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.owfs.jowfsclient.Enums.OwAlias;
-import org.owfs.jowfsclient.Enums.OwBusReturn;
-import org.owfs.jowfsclient.Enums.OwDeviceDisplayFormat;
-import org.owfs.jowfsclient.Enums.OwPersistence;
-import org.owfs.jowfsclient.Enums.OwTemperatureScale;
 import org.owfs.jowfsclient.OwfsClient;
 import org.owfs.jowfsclient.OwfsException;
 
@@ -102,41 +97,10 @@ public class OwfsClientRegularFs implements OwfsClient {
 	}
 
 	@Override
-	public void setAlias(OwAlias alias) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setBusReturn(OwBusReturn busReturn) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setDeviceDisplayFormat(OwDeviceDisplayFormat deviceDisplay) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setPersistence(OwPersistence persistence) {
-		// ignore
-	}
-
-	@Override
-	public void setTemperatureScale(OwTemperatureScale tempScale) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void setTimeout(int timeout) {
-		// ignore
-	}
-
-	@Override
 	public void write(String path, String dataToWrite) throws IOException, OwfsException {
 		File file = new File(root.getAbsolutePath() + path);
 		if (file.isFile() && file.canWrite()) {
-			DataOutputStream outputStream = new DataOutputStream(
-					new FileOutputStream(file));
+			DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(file));
 			outputStream.writeBytes(dataToWrite);
 		} else {
 			throw new OwfsException("Error", 1);
