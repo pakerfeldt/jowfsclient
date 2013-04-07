@@ -21,7 +21,15 @@ import org.owfs.jowfsclient.Enums.OwTemperatureScale;
  */
 public class Flags {
 
+	private static final int OWNET_REQUEST = 0x00000100; // default flag
 	private int flags;
+
+	/**
+	 * Constructs default Flags object.
+	 */
+	public Flags() {
+		this(OWNET_REQUEST);
+	}
 
 	/**
 	 * Constructs a new Flags object.
@@ -66,6 +74,15 @@ public class Flags {
 	}
 
 	/**
+	 * Returns the value of the persistence represented as a {@link OwPersistence}.
+	 *
+	 * @return the value of the persistence represented as a {@link OwPersistence}.
+	 */
+	public OwPersistence getPersistence() {
+		return OwPersistence.getEnum(OwPersistence.getBitmask() | flags);
+	}
+
+	/**
 	 * Set the persistence bits.
 	 *
 	 * @param persistence the new persistence value
@@ -75,15 +92,6 @@ public class Flags {
 		flags &= ~OwPersistence.getBitmask();
 		/* Set persistence bits */
 		flags |= persistence.intValue;
-	}
-
-	/**
-	 * Returns the value of the persistence represented as a {@link OwPersistence}.
-	 *
-	 * @return the value of the persistence represented as a {@link OwPersistence}.
-	 */
-	public OwPersistence getPersistence() {
-		return OwPersistence.getEnum(OwPersistence.getBitmask() | flags);
 	}
 
 	/**

@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.owfs.jowfsclient;
 
+import org.owfs.jowfsclient.alarm.AlarmingDevicesReader;
+import org.owfs.jowfsclient.alarm.AlarmingDevicesScanner;
 import org.owfs.jowfsclient.internal.OwfsClientImpl;
 import org.owfs.jowfsclient.internal.OwfsClientThreadSafeFactory;
 import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
@@ -38,30 +40,40 @@ import org.owfs.jowfsclient.internal.regularfs.OwfsClientRegularFs;
 
 public class OwfsClientFactory {
 
-	private String hostName;
-	private int portNumber;
 	private OwfsClientConfig config;
 
-	/**
-	 * Creates a new {@link OwfsClient} instance.
-	 *
-	 * @param hostname A {@link String} representation of the hostname to connect to.
-	 * @param port     The port to connect to.
-	 * @return a new {@link OwfsClient} instance.
-	 */
-	public static OwfsClient newOwfsClient(String hostname, Integer port, OwfsClientConfig config) {
-		return new OwfsClientImpl(hostname, port, config);
+	public OwfsClientFactory(String hostName, int portNumber) {
+		config = new OwfsClientConfig(hostName, portNumber);
+		config.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
+		config.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
+		config.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+		config.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
+	}
+
+	public OwfsClient createNewConnection() {
+		return new OwfsClientImpl(config);
+	}
+
+	public AlarmingDevicesScanner createNewAlarmingScanner() {
+		return new AlarmingDevicesScanner(new AlarmingDevicesReader(this));
 	}
 
 	/**
-	 * Thread safe {@link OwfsClient}
+	 * Creates a new {@link OwfsClient} instance.	 *
 	 *
-	 * @param hostname
-	 * @param port
+	 * @return a new {@link OwfsClient} instance.
+	 */
+	public static OwfsClient newOwfsClient(OwfsClientConfig config) {
+		return new OwfsClientImpl(config);
+	}
+
+	/**
+	 * Thread safe {@link OwfsClient}	 *
+	 *
 	 * @return
 	 */
-	public static OwfsClient newOwfsClientThreadSafe(String hostname, Integer port, OwfsClientConfig config) {
-		return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(hostname, port, config));
+	public static OwfsClient newOwfsClientThreadSafe(OwfsClientConfig config) {
+		return new OwfsClientThreadSafeFactory().decorate(newOwfsClient(config));
 	}
 
 	/**
@@ -73,29 +85,5 @@ public class OwfsClientFactory {
 	 */
 	public static OwfsClient newOwfsClient(String rootPath) {
 		return new OwfsClientRegularFs(rootPath);
-	}
-
-	public OwfsClientFactory(String hostName, int portNumber) {
-		this.hostName = hostName;
-		this.portNumber = portNumber;
-	}
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public int getPortNumber() {
-		return portNumber;
-	}
-
-	public OwfsClient createNewConnection() {
-		if (config == null) {
-			config = new OwfsClientConfig();
-			config.setDeviceDisplayFormat(Enums.OwDeviceDisplayFormat.OWNET_DDF_F_DOT_I);
-			config.setTemperatureScale(Enums.OwTemperatureScale.OWNET_TS_CELSIUS);
-			config.setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
-			config.setBusReturn(Enums.OwBusReturn.OWNET_BUSRETURN_ON);
-		}
-		return new OwfsClientImpl(hostName, portNumber, config);
 	}
 }

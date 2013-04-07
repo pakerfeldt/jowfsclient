@@ -2,7 +2,6 @@ package org.owfs.jowfsclient.alarm;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -23,7 +22,6 @@ import org.testng.annotations.Test;
 @Test(groups = TestNGGroups.UNIT)
 public class AlarmingDevicesReaderTest {
 
-	public static final String DEVICE = "XXX";
 	public static final String DEVICE_NAME_1 = "DEVICE1";
 	public static final String DEVICE_NAME_2 = "DEVICE2";
 
@@ -59,15 +57,18 @@ public class AlarmingDevicesReaderTest {
 
 	public void shouldProcessAlarmingDeviceCommander() throws IOException, OwfsException {
 		//given
-		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(null);
+		OwfsClientFactory owfsClientFactory = mock(OwfsClientFactory.class);
+		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(owfsClientFactory);
 		AlarmingDeviceHandler alarmingDeviceHandler = mock(AlarmingDeviceHandler.class);
-		alarmingDevicesReader.addObservableDevice(DEVICE_NAME_1, alarmingDeviceHandler);
+		when(alarmingDeviceHandler.getDeviceName()).thenReturn(DEVICE_NAME_1);
+		alarmingDevicesReader.addAlarmingDeviceHandler(alarmingDeviceHandler);
 
 		//when
 		alarmingDevicesReader.processAlarmingDevices(Arrays.asList(DEVICE_NAME_1, DEVICE_NAME_2));
 
 		//then
-		verify(alarmingDeviceHandler, times(1)).onAlarm(any(OwfsClient.class), anyString(), eq(DEVICE_NAME_1));
+		verify(alarmingDeviceHandler, times(1)).onAlarm(any(OwfsClient.class));
+		verify(alarmingDeviceHandler, times(1)).onInitialize(any(OwfsClient.class));
 	}
 
 }

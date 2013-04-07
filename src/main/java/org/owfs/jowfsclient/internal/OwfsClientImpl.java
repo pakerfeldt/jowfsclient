@@ -33,22 +33,24 @@ public class OwfsClientImpl implements OwfsClient {
 
 	private static final int OWNET_DEFAULT_DATALEN = 4096; // default data
 	// length
-	private String hostname;
-	private Integer port;
+
+	private OwfsClientConfig config;
 	private Socket owSocket;
 	private DataInputStream owIn;
 	private DataOutputStream owOut;
-	private OwfsClientConfig config;
 
 	/**
 	 * Constructs a new OwClient with the specified connection details.
 	 *
-	 * @param hostname A {@link String} representation of the hostname to connect to.
-	 * @param port     The port to connect to, which owserver listens to.
+	 * @param config connection configuration including owfs host location and protocol specific settings such as device name format etc.
 	 */
-	public OwfsClientImpl(String hostname, Integer port, OwfsClientConfig config) {
-		this.hostname = hostname;
-		this.port = port;
+	public OwfsClientImpl(OwfsClientConfig config) {
+		this.config = config;
+	}
+
+	@Override
+	public void setConfiguration(OwfsClientConfig config) {
+		this.config = config;
 	}
 
 	/**
@@ -65,17 +67,21 @@ public class OwfsClientImpl implements OwfsClient {
 			closeSocketAndDataStreams();
 		}
 		if (owSocket == null || !owSocket.isConnected()) {
-			owSocket = new Socket();
-			try {
-				owSocket.connect(new InetSocketAddress(hostname, port), config.getConnectionTimeout());
-			} catch (SocketTimeoutException ste) {
-				owSocket = null;
-				return false;
-			}
+			return tryToSocketConnectionAndStreamsInitialization();
+		} else {
+			return false;
+		}
+	}
+
+	private boolean tryToSocketConnectionAndStreamsInitialization() throws IOException {
+		owSocket = new Socket();
+		try {
+			owSocket.connect(new InetSocketAddress(config.getHostName(), config.getPortNumber()), config.getConnectionTimeout());
 			owIn = new DataInputStream(owSocket.getInputStream());
 			owOut = new DataOutputStream(owSocket.getOutputStream());
 			return true;
-		} else {
+		} catch (SocketTimeoutException ste) {
+			owSocket = null;
 			return false;
 		}
 	}
@@ -86,7 +92,9 @@ public class OwfsClientImpl implements OwfsClient {
 	}
 
 	private void closeSocketAndDataStreams() throws IOException {
-		close(owSocket);
+		if (owSocket != null) {
+			owSocket.close();
+		}
 		owSocket = null;
 		close(owOut);
 		owOut = null;

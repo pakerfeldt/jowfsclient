@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsClientConfig;
 import org.owfs.jowfsclient.OwfsException;
 
 /**
@@ -39,6 +40,11 @@ public class OwfsClientRegularFs implements OwfsClient {
 		}
 		root_length = root.getAbsolutePath().length();
 
+	}
+
+	@Override
+	public void setConfiguration(OwfsClientConfig config) {
+		// no need to do nothing
 	}
 
 	@Override

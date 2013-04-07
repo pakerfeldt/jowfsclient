@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
  * @author Tom Kucharski
  */
 @Test(groups = TestNGGroups.INTEGRATION)
-public class OwfsClientTest {
+public abstract class OwfsClientTest {
 	private static final Logger log = LoggerFactory.getLogger(OwfsClientTest.class);
 
 	public static final String OWFS_HOSTNAME = "owfs.hostname";

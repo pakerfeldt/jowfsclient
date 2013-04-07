@@ -16,19 +16,32 @@ public class AlarmingDevicesReader implements Runnable {
 	private OwfsClientFactory factory;
 	private OwfsClient client;
 
-	private Map<String, AlarmingDeviceHandler> observableDevices = new HashMap<String, AlarmingDeviceHandler>();
+	private Map<String, AlarmingDeviceHandler> alarmingDevices = new HashMap<String, AlarmingDeviceHandler>();
 
 	public AlarmingDevicesReader(OwfsClientFactory factory) {
 		this.factory = factory;
 	}
 
-	public void addObservableDevice(String deviceName, AlarmingDeviceHandler commander) {
-		observableDevices.put(deviceName, commander);
+	public void addAlarmingDeviceHandler(AlarmingDeviceHandler commander) throws IOException, OwfsException {
+		commander.onInitialize(getClient());
+		alarmingDevices.put(commander.getDeviceName(), commander);
+	}
+
+	public void removeAlarmingDeviceHandler(String deviceName) {
+		alarmingDevices.remove(deviceName);
+	}
+
+	private OwfsClient getClient() {
+		connectIfNecessary();
+		return client;
+	}
+
+	public boolean isWorthToWork() {
+		return alarmingDevices.size() > 0;
 	}
 
 	@Override
 	public void run() {
-		connectIfNecessary();
 		tryToReadAlarmingDirectory();
 	}
 
@@ -41,7 +54,7 @@ public class AlarmingDevicesReader implements Runnable {
 	}
 
 	private void readAlarmingDirectory() throws OwfsException, IOException {
-		List<String> read = client.listDirectory(OWFSUtils.ALARM_FOLDER_FOR_OWFS_SERVER);
+		List<String> read = getClient().listDirectory(OWFSUtils.ALARM_FOLDER_FOR_OWFS_SERVER);
 		processAlarmingDevices(read);
 	}
 
@@ -55,9 +68,9 @@ public class AlarmingDevicesReader implements Runnable {
 
 	void processAlarmingDevice(String devicePath) throws IOException, OwfsException {
 		String deviceName = OWFSUtils.extractDeviceNameFromDevicePath(devicePath);
-		AlarmingDeviceHandler alarmingDeviceHandler = observableDevices.get(deviceName);
+		AlarmingDeviceHandler alarmingDeviceHandler = alarmingDevices.get(deviceName);
 		if (alarmingDeviceHandler != null) {
-			alarmingDeviceHandler.onAlarm(client, devicePath, deviceName);
+			alarmingDeviceHandler.onAlarm(getClient());
 		}
 	}
 
@@ -71,18 +84,6 @@ public class AlarmingDevicesReader implements Runnable {
 	void connectIfNecessary() {
 		if (client == null) {
 			client = factory.createNewConnection();
-		}
-	}
-
-	public void initialize() {
-		connectIfNecessary();
-		try {
-			for (Map.Entry<String, AlarmingDeviceHandler> entry : observableDevices.entrySet()) {
-				log.info("Initializing: '" + entry.getKey() + "'...");
-				entry.getValue().onInitialize(client, entry.getKey());
-			}
-		} catch (Exception e) {
-			handleConnectionException(e);
 		}
 	}
 }

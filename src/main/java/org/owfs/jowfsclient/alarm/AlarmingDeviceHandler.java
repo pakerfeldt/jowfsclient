@@ -9,7 +9,9 @@ import org.owfs.jowfsclient.OwfsException;
  */
 public interface AlarmingDeviceHandler {
 
-	void onInitialize(OwfsClient client, String deviceName) throws IOException, OwfsException;
+	String getDeviceName();
 
-	void onAlarm(OwfsClient client, String devicePath, String device) throws IOException, OwfsException;
+	void onInitialize(OwfsClient client) throws IOException, OwfsException;
+
+	void onAlarm(OwfsClient client) throws IOException, OwfsException;
 }

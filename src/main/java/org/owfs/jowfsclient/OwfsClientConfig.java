@@ -6,10 +6,27 @@ import org.owfs.jowfsclient.internal.Flags;
  * @author Tom Kucharski
  */
 public class OwfsClientConfig {
-	private static final int OWNET_REQUEST = 0x00000100; // default flag
 
-	private Flags flags = new Flags(OWNET_REQUEST);
+	private String hostName;
+
+	private int portNumber;
+
+	private Flags flags = new Flags();
+
 	private int connectionTimeout = 4000; // default to 4s timeout
+
+	public OwfsClientConfig(String hostName, int portNumber) {
+		this.hostName = hostName;
+		this.portNumber = portNumber;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public int getPortNumber() {
+		return portNumber;
+	}
 
 	public Flags getFlags() {
 		return flags;

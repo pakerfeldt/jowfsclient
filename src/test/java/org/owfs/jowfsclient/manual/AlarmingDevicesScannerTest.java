@@ -1,4 +1,6 @@
-package org.owfs.jowfsclient.integration;
+package org.owfs.jowfsclient.manual;
+
+import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import org.owfs.jowfsclient.OwfsClientFactory;
@@ -7,6 +9,7 @@ import org.owfs.jowfsclient.TestNGGroups;
 import org.owfs.jowfsclient.alarm.AlarmingDevicesReader;
 import org.owfs.jowfsclient.alarm.AlarmingDevicesScanner;
 import org.owfs.jowfsclient.alarm.SwitchAlarmingDeviceHandler;
+import org.owfs.jowfsclient.integration.TestNGIntegrationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Parameters;
@@ -19,6 +22,9 @@ import org.testng.annotations.Test;
 public class AlarmingDevicesScannerTest {
 	private static final Logger log = LoggerFactory.getLogger(AlarmingDevicesScannerTest.class);
 
+	private Thread waitingThread = Thread.currentThread();
+	boolean messageReceived = false;
+
 	@Parameters({
 			TestNGIntegrationProperties.OWFS_HOSTNAME,
 			TestNGIntegrationProperties.OWFS_PORT,
@@ -26,26 +32,36 @@ public class AlarmingDevicesScannerTest {
 	})
 	@Test
 	public void shouldReceiveAtLeastOneMessage(String hostName, int port, String inputDevice) throws InterruptedException, IOException, OwfsException {
-		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
 
+		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
-		SwitchAlarmingDeviceHandler ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceHandler("133333333") {
+		SwitchAlarmingDeviceHandler ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceHandler(inputDevice, "133333333") {
 			@Override
-			public void handleAlarm(String deviceName, String latchStatus, String sensedStatus) {
-				log.info("Alarm '" + deviceName + "' : latch:;" + latchStatus + "', sensed:'" + sensedStatus + "'");
+			public void handleAlarm(String latchStatus, String sensedStatus) {
+				log.info("Alarm '" + getDeviceName() + "' : latch:;" + latchStatus + "', sensed:'" + sensedStatus + "'");
+				cancelTestSuccesfully();
 			}
 		};
-		alarmingDevicesReader.addObservableDevice(inputDevice, ds2408AlarmingDeviceHandler);
+		alarmingDevicesReader.addAlarmingDeviceHandler(ds2408AlarmingDeviceHandler);
 		AlarmingDevicesScanner alarmingDevicesScanner = new AlarmingDevicesScanner(alarmingDevicesReader);
-
 
 		alarmingDevicesScanner.init();
 		doManualAction(inputDevice);
 		alarmingDevicesScanner.shutdown();
+		assertTrue(messageReceived);
+	}
+
+	private void cancelTestSuccesfully() {
+		messageReceived = true;
+		waitingThread.interrupt();
 	}
 
 	private void doManualAction(String inputDevice) throws InterruptedException {
-		log.info("set '" + inputDevice + "' in alarm mode, for example by set high on any input");
-		Thread.sleep(60000);
+		log.info("set '" + inputDevice + "' in alarm mode, for example by set high on any input. You've got 60 seconds to do that!");
+		try {
+			Thread.sleep(60000);
+		} catch (InterruptedException e) {
+			log.info("Supposedly you set high on input and everything works properly!");
+		}
 	}
 }

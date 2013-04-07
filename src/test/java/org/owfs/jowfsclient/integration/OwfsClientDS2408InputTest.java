@@ -1,7 +1,6 @@
 package org.owfs.jowfsclient.integration;
 
 import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.FileAssert.fail;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +23,7 @@ public class OwfsClientDS2408InputTest extends OwfsClientTest {
 	public static final String ALARM_FORMAT_CHANGE_ON_ANY_INPUT = "133333333";
 	public static final String ALARM_FORMAT_CHANGE_ON_ANY_INPUT_WEIRD_RESULT = "   122222230";
 
-	private String deviceDs2408;
+	protected String deviceDs2408;
 
 	@BeforeClass
 	@Parameters(OWFS_DEVICE_DS2408_INPUT)
@@ -45,25 +44,8 @@ public class OwfsClientDS2408InputTest extends OwfsClientTest {
 		assertEquals(ALARM_FORMAT_CHANGE_ON_ANY_INPUT_WEIRD_RESULT, read);
 	}
 
-	@Test(groups = TestNGGroups.INTEGRATION_MANUAL,
-			description = "This test needs your manual action to sense any input in your DS2408 device"
-	)
-	public void testManuallyTestHowAlarmWorks() throws Exception {
-		setDefaultAlarmFormat();
 
-		//I know, this is weird, but simply waits max 1000 loops until you physically sense any input in your device
-		for (int i = 0; i < 1000; i++) {
-			log.info("Waiting " + i + "/1000 loops until you physically sense any input in device " + deviceDs2408 + "...");
-			if (checkIfDeviceIsAlarming(deviceDs2408)) {
-				log.info("Well done! Input sensed: " + client.read("/alarm/" + deviceDs2408 + "/latch.ALL"));
-				disableAlarming();
-				return;
-			}
-		}
-		fail();
-	}
-
-	private boolean checkIfDeviceIsAlarming(String device) throws OwfsException, IOException {
+	protected boolean checkIfDeviceIsAlarming(String device) throws OwfsException, IOException {
 		List<String> alarmingDevices = client.listDirectoryAll("/alarm");
 		for (String devicePath : alarmingDevices) {
 			if (devicePath.contains(device)) {
@@ -73,11 +55,11 @@ public class OwfsClientDS2408InputTest extends OwfsClientTest {
 		return false;
 	}
 
-	private void disableAlarming() throws IOException, OwfsException {
+	protected void disableAlarming() throws IOException, OwfsException {
 		client.write(deviceDs2408 + "/latch.BYTE", "0");
 	}
 
-	private void setDefaultAlarmFormat() throws IOException, OwfsException {
+	protected void setDefaultAlarmFormat() throws IOException, OwfsException {
 		client.write(deviceDs2408 + "/set_alarm", ALARM_FORMAT_CHANGE_ON_ANY_INPUT);
 	}
 }

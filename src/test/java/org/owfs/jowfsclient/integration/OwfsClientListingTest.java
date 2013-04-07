@@ -13,24 +13,23 @@ import org.testng.annotations.Test;
 /**
  * @author Tom Kucharski
  */
-@Test(groups = TestNGGroups.INTEGRATION_MANUAL)
+@Test(groups = TestNGGroups.INTEGRATION)
 public class OwfsClientListingTest extends OwfsClientTest {
-
 	private static final Logger log = LoggerFactory.getLogger(OwfsClientListingTest.class);
 
 	@Test
 	public void shouldShowDirNotExist() throws IOException, OwfsException {
-		Boolean exists = client.exists("/alarming");
+		Boolean exists = client.exists("/alarmingXXX");
 		assertTrue(exists);
 	}
 
 	@Test
-	public void shouldListAlarmDirectiories() throws Exception {
+	public void shouldListAlarmDirectioryWithoutException() throws Exception {
 		listDirectory("/alarm");
 	}
 
 	@Test
-	public void shouldListDirectiories() throws Exception {
+	public void shouldListMainDirectioryWithoutException() throws Exception {
 		listDirectory("/");
 	}
 
@@ -53,11 +52,6 @@ public class OwfsClientListingTest extends OwfsClientTest {
 		} catch (OwfsException e) {
 			log.info("\t" + subdir + "\t: DIRECTORY");
 		}
-	}
-
-	@Test
-	public void should() {
-		log.info("XXX" + (~5));
 	}
 }
 

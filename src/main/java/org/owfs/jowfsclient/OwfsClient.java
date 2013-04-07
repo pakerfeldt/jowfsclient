@@ -13,6 +13,14 @@ import java.util.List;
 public interface OwfsClient {
 
 	/**
+	 * Setup configuration for Owfs connection defining device display format, measuring metrics, persistence, aliasing etc.
+	 * Normally this configuration is done once per connection.
+	 *
+	 * @param config configuration
+	 */
+	void setConfiguration(OwfsClientConfig config);
+
+	/**
 	 * Tears down the connection to the owserver if open.
 	 *
 	 * @throws IOException if an I/O error occurs.

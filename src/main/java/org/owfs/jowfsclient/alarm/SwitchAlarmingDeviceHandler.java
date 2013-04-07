@@ -18,54 +18,61 @@ public abstract class SwitchAlarmingDeviceHandler implements AlarmingDeviceHandl
 	public static final String ANY_LATCH_ON = "1";
 	public static final String ANY_LATCH_OFF = "0";
 
+	private final String deviceName;
 	private String alarmingMask;
 
-	public SwitchAlarmingDeviceHandler(String alarmingMask) {
+	public SwitchAlarmingDeviceHandler(String deviceName, String alarmingMask) {
 		this.alarmingMask = alarmingMask;
+		this.deviceName = deviceName;
 	}
 
 	@Override
-	public void onInitialize(OwfsClient client, String deviceName) throws IOException, OwfsException {
-		setAlarmTrigger(client, deviceName);
-		clearDeviceJustPoweredFlag(client, deviceName);
+	public String getDeviceName() {
+		return deviceName;
 	}
 
 	@Override
-	public void onAlarm(OwfsClient client, String devicePath, String device) throws IOException, OwfsException {
-		String latchStatus = readWhatIsLatched(client, devicePath);
+	public void onInitialize(OwfsClient client) throws IOException, OwfsException {
+		setAlarmMaskTrigger(client);
+		clearDeviceJustPoweredFlag(client);
+	}
+
+	@Override
+	public void onAlarm(OwfsClient client) throws IOException, OwfsException {
+		String latchStatus = readWhatIsLatched(client);
 		if (noneLatchOn(latchStatus)) {
-			clearDeviceJustPoweredFlag(client, device);
+			clearDeviceJustPoweredFlag(client);
 		} else {
-			clearDeviceLatchAllStatus(client, device);
-			String sensedStatus = readWhatIsActuallySensed(client, devicePath);
-			handleAlarm(devicePath, latchStatus, sensedStatus);
+			clearDeviceLatchAllStatus(client);
+			String sensedStatus = readWhatIsActuallySensed(client);
+			handleAlarm(latchStatus, sensedStatus);
 		}
 	}
 
-	private void clearDeviceLatchAllStatus(OwfsClient client, String devicePath) throws IOException, OwfsException {
+	private void clearDeviceLatchAllStatus(OwfsClient client) throws IOException, OwfsException {
 		//clearing any latch will clear all latches according to dallas spec
-		client.write(devicePath + COMMAND_LATCH_1, ANY_LATCH_OFF);
+		client.write(deviceName + COMMAND_LATCH_1, ANY_LATCH_OFF);
 	}
 
-	public abstract void handleAlarm(String deviceName, String latchStatus, String sensedStatus);
+	public abstract void handleAlarm(String latchStatus, String sensedStatus);
 
-	private String readWhatIsActuallySensed(OwfsClient client, String devicePath) throws IOException, OwfsException {
-		return client.read(devicePath + COMMAND_SENSED_ALL);
+	private String readWhatIsActuallySensed(OwfsClient client) throws IOException, OwfsException {
+		return client.read(deviceName + COMMAND_SENSED_ALL);
 	}
 
 	private boolean noneLatchOn(String latchAll) {
 		return !latchAll.contains(ANY_LATCH_ON);
 	}
 
-	private String readWhatIsLatched(OwfsClient client, String devicePath) throws IOException, OwfsException {
-		return client.read(devicePath + COMMAND_LATCH_ALL);
+	private String readWhatIsLatched(OwfsClient client) throws IOException, OwfsException {
+		return client.read(deviceName + COMMAND_LATCH_ALL);
 	}
 
-	private void clearDeviceJustPoweredFlag(OwfsClient client, String deviceName) throws IOException, OwfsException {
+	private void clearDeviceJustPoweredFlag(OwfsClient client) throws IOException, OwfsException {
 		client.write(deviceName + COMMAND_POWER_ON_RESET, COMMAND_POWER_ON_RESET_CLEARING_VALUE);
 	}
 
-	private void setAlarmTrigger(OwfsClient client, String deviceName) throws IOException, OwfsException {
+	private void setAlarmMaskTrigger(OwfsClient client) throws IOException, OwfsException {
 		client.write(deviceName + COMMAND_SET_ALARM, alarmingMask);
 	}
 
