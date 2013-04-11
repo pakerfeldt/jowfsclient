@@ -7,7 +7,7 @@ import org.owfs.jowfsclient.OwfsException;
 /**
  * @author Tom Kucharski
  */
-public interface AlarmingDeviceHandler {
+public interface AlarmingDeviceListener {
 
 	String getDeviceName();
 

@@ -38,9 +38,13 @@ public class AlarmingDevicesScanner {
 		scheduledThreadPoolExecutor.scheduleAtFixedRate(reader, INITIAL_DELAY, period, TimeUnit.MILLISECONDS);
 	}
 
-	public void addAlarmingDeviceHandler(AlarmingDeviceHandler commander) throws IOException, OwfsException {
+	public void addAlarmingDeviceHandler(AlarmingDeviceListener commander) throws IOException, OwfsException {
 		reader.addAlarmingDeviceHandler(commander);
 		verifyIfShouldBeStartedOrStopped();
+	}
+
+	public boolean isAlarmingDeviceOnList(String deviceName) {
+		return reader.isAlarmingDeviceHandlerInstalled(deviceName);
 	}
 
 	public void removeAlarmingDeviceHandler(String deviceName) {

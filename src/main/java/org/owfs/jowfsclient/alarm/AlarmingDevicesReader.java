@@ -16,15 +16,19 @@ public class AlarmingDevicesReader implements Runnable {
 	private OwfsClientFactory factory;
 	private OwfsClient client;
 
-	private Map<String, AlarmingDeviceHandler> alarmingDevices = new HashMap<String, AlarmingDeviceHandler>();
+	private Map<String, AlarmingDeviceListener> alarmingDevices = new HashMap<String, AlarmingDeviceListener>();
 
 	public AlarmingDevicesReader(OwfsClientFactory factory) {
 		this.factory = factory;
 	}
 
-	public void addAlarmingDeviceHandler(AlarmingDeviceHandler commander) throws IOException, OwfsException {
+	public void addAlarmingDeviceHandler(AlarmingDeviceListener commander) throws IOException, OwfsException {
 		commander.onInitialize(getClient());
 		alarmingDevices.put(commander.getDeviceName(), commander);
+	}
+
+	public boolean isAlarmingDeviceHandlerInstalled(String deviceName) {
+		return alarmingDevices.containsKey(deviceName);
 	}
 
 	public void removeAlarmingDeviceHandler(String deviceName) {
@@ -68,9 +72,9 @@ public class AlarmingDevicesReader implements Runnable {
 
 	void processAlarmingDevice(String devicePath) throws IOException, OwfsException {
 		String deviceName = OWFSUtils.extractDeviceNameFromDevicePath(devicePath);
-		AlarmingDeviceHandler alarmingDeviceHandler = alarmingDevices.get(deviceName);
-		if (alarmingDeviceHandler != null) {
-			alarmingDeviceHandler.onAlarm(getClient());
+		AlarmingDeviceListener alarmingDeviceListener = alarmingDevices.get(deviceName);
+		if (alarmingDeviceListener != null) {
+			alarmingDeviceListener.onAlarm(getClient());
 		}
 	}
 

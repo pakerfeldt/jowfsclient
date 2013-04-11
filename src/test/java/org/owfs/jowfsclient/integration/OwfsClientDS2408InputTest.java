@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
+import org.owfs.jowfsclient.device.SwitchAlarmingDeviceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
@@ -20,7 +21,6 @@ public class OwfsClientDS2408InputTest extends OwfsClientTest {
 
 	public static final String OWFS_DEVICE_DS2408_INPUT = "owfs.device.ds2408.input";
 
-	public static final String ALARM_FORMAT_CHANGE_ON_ANY_INPUT = "133333333";
 	public static final String ALARM_FORMAT_CHANGE_ON_ANY_INPUT_WEIRD_RESULT = "   122222230";
 
 	protected String deviceDs2408;
@@ -60,6 +60,6 @@ public class OwfsClientDS2408InputTest extends OwfsClientTest {
 	}
 
 	protected void setDefaultAlarmFormat() throws IOException, OwfsException {
-		client.write(deviceDs2408 + "/set_alarm", ALARM_FORMAT_CHANGE_ON_ANY_INPUT);
+		client.write(deviceDs2408 + "/set_alarm", SwitchAlarmingDeviceListener.ALARMING_MASK_8_SWITCHES);
 	}
 }

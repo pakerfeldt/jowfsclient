@@ -8,7 +8,8 @@ import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.owfs.jowfsclient.alarm.AlarmingDevicesReader;
 import org.owfs.jowfsclient.alarm.AlarmingDevicesScanner;
-import org.owfs.jowfsclient.alarm.SwitchAlarmingDeviceHandler;
+import org.owfs.jowfsclient.device.SwitchAlarmingDeviceEvent;
+import org.owfs.jowfsclient.device.SwitchAlarmingDeviceListener;
 import org.owfs.jowfsclient.integration.TestNGIntegrationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,13 @@ public class AlarmingDevicesScannerTest {
 
 		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
-		SwitchAlarmingDeviceHandler ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceHandler(inputDevice, "133333333") {
+		SwitchAlarmingDeviceListener ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceListener(
+				inputDevice,
+				SwitchAlarmingDeviceListener.ALARMING_MASK_8_SWITCHES
+		) {
 			@Override
-			public void handleAlarm(String latchStatus, String sensedStatus) {
-				log.info("Alarm '" + getDeviceName() + "' : latch:;" + latchStatus + "', sensed:'" + sensedStatus + "'");
+			public void handleAlarm(SwitchAlarmingDeviceEvent event) {
+				log.info("Alarm '" + getDeviceName() + "' : latch:;" + event.latchStatus + "', sensed:'" + event.sensedStatus + "'");
 				cancelTestSuccesfully();
 			}
 		};

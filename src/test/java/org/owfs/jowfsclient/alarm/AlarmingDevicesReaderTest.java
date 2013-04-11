@@ -59,16 +59,16 @@ public class AlarmingDevicesReaderTest {
 		//given
 		OwfsClientFactory owfsClientFactory = mock(OwfsClientFactory.class);
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(owfsClientFactory);
-		AlarmingDeviceHandler alarmingDeviceHandler = mock(AlarmingDeviceHandler.class);
-		when(alarmingDeviceHandler.getDeviceName()).thenReturn(DEVICE_NAME_1);
-		alarmingDevicesReader.addAlarmingDeviceHandler(alarmingDeviceHandler);
+		AlarmingDeviceListener alarmingDeviceListener = mock(AlarmingDeviceListener.class);
+		when(alarmingDeviceListener.getDeviceName()).thenReturn(DEVICE_NAME_1);
+		alarmingDevicesReader.addAlarmingDeviceHandler(alarmingDeviceListener);
 
 		//when
 		alarmingDevicesReader.processAlarmingDevices(Arrays.asList(DEVICE_NAME_1, DEVICE_NAME_2));
 
 		//then
-		verify(alarmingDeviceHandler, times(1)).onAlarm(any(OwfsClient.class));
-		verify(alarmingDeviceHandler, times(1)).onInitialize(any(OwfsClient.class));
+		verify(alarmingDeviceListener, times(1)).onAlarm(any(OwfsClient.class));
+		verify(alarmingDeviceListener, times(1)).onInitialize(any(OwfsClient.class));
 	}
 
 }
