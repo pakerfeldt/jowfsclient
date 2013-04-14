@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.owfs.jowfsclient.Enums;
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientConfig;
+import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsConnectionConfig;
 import org.owfs.jowfsclient.OwfsException;
 
 /**
@@ -29,12 +29,12 @@ import org.owfs.jowfsclient.OwfsException;
  *
  * @author Patrik Akerfeldt
  */
-public class OwfsClientImpl implements OwfsClient {
+public class OwfsConnectionImpl implements OwfsConnection {
 
 	private static final int OWNET_DEFAULT_DATALEN = 4096; // default data
 	// length
 
-	private OwfsClientConfig config;
+	private OwfsConnectionConfig config;
 	private Socket owSocket;
 	private DataInputStream owIn;
 	private DataOutputStream owOut;
@@ -44,12 +44,12 @@ public class OwfsClientImpl implements OwfsClient {
 	 *
 	 * @param config connection configuration including owfs host location and protocol specific settings such as device name format etc.
 	 */
-	public OwfsClientImpl(OwfsClientConfig config) {
+	public OwfsConnectionImpl(OwfsConnectionConfig config) {
 		this.config = config;
 	}
 
 	@Override
-	public void setConfiguration(OwfsClientConfig config) {
+	public void setConfiguration(OwfsConnectionConfig config) {
 		this.config = config;
 	}
 
@@ -121,13 +121,13 @@ public class OwfsClientImpl implements OwfsClient {
 	}
 
 	private boolean isPersistenceEnabled() {
-		return config.getFlags().getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON;
+		return config.getFlags().getPersistence() == Enums.OwPersistence.ON;
 	}
 
 	@Override
 	public String read(String path) throws IOException, OwfsException {
 		ResponsePacket response;
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_READ, OWNET_DEFAULT_DATALEN, config.getFlags(), path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.READ, OWNET_DEFAULT_DATALEN, config.getFlags(), path);
 		sendRequest(request);
 		do {
 			response = readPacket();
@@ -140,7 +140,7 @@ public class OwfsClientImpl implements OwfsClient {
 
 	@Override
 	public void write(String path, String dataToWrite) throws IOException, OwfsException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_WRITE, config.getFlags(), path, dataToWrite);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.WRITE, config.getFlags(), path, dataToWrite);
 		sendRequest(request);
 		/*
 		* Even if we're not interested in the result of the response packet
@@ -154,7 +154,7 @@ public class OwfsClientImpl implements OwfsClient {
 	@Override
 	public Boolean exists(String path) throws IOException, OwfsException {
 		ResponsePacket response;
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_PRESENCE, 0, config.getFlags(), path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.PRESENCE, 0, config.getFlags(), path);
 		sendRequest(request);
 		response = readPacket();
 
@@ -175,7 +175,7 @@ public class OwfsClientImpl implements OwfsClient {
 	 */
 	@Override
 	public List<String> listDirectoryAll(String path) throws OwfsException, IOException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIRALL, 0, config.getFlags(), path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.DIRALL, 0, config.getFlags(), path);
 		sendRequest(request);
 		ResponsePacket response = readPacket();
 		List<String> list = new ArrayList<String>();
@@ -189,7 +189,7 @@ public class OwfsClientImpl implements OwfsClient {
 
 	@Override
 	public List<String> listDirectory(String path) throws OwfsException, IOException {
-		RequestPacket request = new RequestPacket(Enums.OwMessageType.OWNET_MSG_DIR, 0, config.getFlags(), path);
+		RequestPacket request = new RequestPacket(Enums.OwMessageType.DIR, 0, config.getFlags(), path);
 		sendRequest(request);
 		ResponsePacket response;
 		List<String> list = new ArrayList<String>();
@@ -269,10 +269,10 @@ public class OwfsClientImpl implements OwfsClient {
 
 	private void grantOrDenyPersistence(int value) {
 		Flags returnFlags = new Flags(value);
-		if (returnFlags.getPersistence() == Enums.OwPersistence.OWNET_PERSISTENCE_ON) {
-			config.getFlags().setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_ON);
+		if (returnFlags.getPersistence() == Enums.OwPersistence.ON) {
+			config.getFlags().setPersistence(Enums.OwPersistence.ON);
 		} else {
-			config.getFlags().setPersistence(Enums.OwPersistence.OWNET_PERSISTENCE_OFF);
+			config.getFlags().setPersistence(Enums.OwPersistence.OFF);
 		}
 	}
 }

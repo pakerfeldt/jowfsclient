@@ -15,12 +15,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientConfig;
+import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsConnectionConfig;
 import org.owfs.jowfsclient.OwfsException;
 
 /**
- * This is an implementation of {@link OwfsClient} that reads from a file
+ * This is an implementation of {@link org.owfs.jowfsclient.OwfsConnection} that reads from a file
  * system, instead of communicating directly with the owserver.
  * It could be used to read the mounted 1-wire file system created by OWFS but
  * also as a simulated version that reads from a static pre-defined file system
@@ -28,12 +28,12 @@ import org.owfs.jowfsclient.OwfsException;
  *
  * @author Patrik Akerfeldt
  */
-public class OwfsClientRegularFs implements OwfsClient {
+public class OwfsConnectionRegularFs implements OwfsConnection {
 
 	private File root;
 	private final int root_length;
 
-	public OwfsClientRegularFs(String rootPath) {
+	public OwfsConnectionRegularFs(String rootPath) {
 		root = new File(rootPath);
 		if (!root.isDirectory()) {
 			throw new IllegalArgumentException(rootPath = " is not a directory.");
@@ -43,7 +43,7 @@ public class OwfsClientRegularFs implements OwfsClient {
 	}
 
 	@Override
-	public void setConfiguration(OwfsClientConfig config) {
+	public void setConfiguration(OwfsConnectionConfig config) {
 		// no need to do nothing
 	}
 

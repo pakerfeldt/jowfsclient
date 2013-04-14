@@ -1,7 +1,7 @@
 package org.owfs.jowfsclient.integration;
 
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientFactory;
+import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public abstract class OwfsClientTest {
 	public static final String OWFS_HOSTNAME = "owfs.hostname";
 	public static final String OWFS_PORT = "owfs.port";
 
-	protected OwfsClient client;
+	protected OwfsConnection client;
 
 	private String owfsHostname;
 	private int owfsPort;
@@ -50,7 +50,7 @@ public abstract class OwfsClientTest {
 
 	@BeforeMethod
 	public void constructOwfsClient() {
-		OwfsClientFactory owfsClientFactory = new OwfsClientFactory(owfsHostname, owfsPort);
-		client = owfsClientFactory.createNewConnection();
+		OwfsConnectionFactory owfsConnectionFactory = new OwfsConnectionFactory(owfsHostname, owfsPort);
+		client = owfsConnectionFactory.createNewConnection();
 	}
 }

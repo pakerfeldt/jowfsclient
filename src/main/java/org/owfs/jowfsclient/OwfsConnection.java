@@ -10,7 +10,7 @@ package org.owfs.jowfsclient;
 import java.io.IOException;
 import java.util.List;
 
-public interface OwfsClient {
+public interface OwfsConnection {
 
 	/**
 	 * Setup configuration for Owfs connection defining device display format, measuring metrics, persistence, aliasing etc.
@@ -18,7 +18,7 @@ public interface OwfsClient {
 	 *
 	 * @param config configuration
 	 */
-	void setConfiguration(OwfsClientConfig config);
+	void setConfiguration(OwfsConnectionConfig config);
 
 	/**
 	 * Tears down the connection to the owserver if open.

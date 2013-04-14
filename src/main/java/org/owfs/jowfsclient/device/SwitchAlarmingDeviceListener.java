@@ -1,7 +1,7 @@
 package org.owfs.jowfsclient.device;
 
 import java.io.IOException;
-import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.alarm.AlarmingDeviceListener;
 
@@ -35,13 +35,13 @@ public abstract class SwitchAlarmingDeviceListener implements AlarmingDeviceList
 	}
 
 	@Override
-	public void onInitialize(OwfsClient client) throws IOException, OwfsException {
+	public void onInitialize(OwfsConnection client) throws IOException, OwfsException {
 		setAlarmMaskTrigger(client);
 		clearDeviceJustPoweredFlag(client);
 	}
 
 	@Override
-	public void onAlarm(OwfsClient client) throws IOException, OwfsException {
+	public void onAlarm(OwfsConnection client) throws IOException, OwfsException {
 		String latchStatus = readWhatIsLatched(client);
 		String sensedStatus = readWhatIsActuallySensed(client);
 		if (noneLatchOn(latchStatus)) {
@@ -52,14 +52,14 @@ public abstract class SwitchAlarmingDeviceListener implements AlarmingDeviceList
 		}
 	}
 
-	private void clearDeviceLatchAllStatus(OwfsClient client) throws IOException, OwfsException {
+	private void clearDeviceLatchAllStatus(OwfsConnection client) throws IOException, OwfsException {
 		//clearing any latch will clear all latches according to dallas spec
 		client.write(deviceName + COMMAND_LATCH_1, ANY_LATCH_OFF);
 	}
 
 	public abstract void handleAlarm(SwitchAlarmingDeviceEvent event);
 
-	private String readWhatIsActuallySensed(OwfsClient client) throws IOException, OwfsException {
+	private String readWhatIsActuallySensed(OwfsConnection client) throws IOException, OwfsException {
 		return client.read(deviceName + COMMAND_SENSED_ALL);
 	}
 
@@ -67,15 +67,15 @@ public abstract class SwitchAlarmingDeviceListener implements AlarmingDeviceList
 		return !latchAll.contains(ANY_LATCH_ON);
 	}
 
-	private String readWhatIsLatched(OwfsClient client) throws IOException, OwfsException {
+	private String readWhatIsLatched(OwfsConnection client) throws IOException, OwfsException {
 		return client.read(deviceName + COMMAND_LATCH_ALL);
 	}
 
-	private void clearDeviceJustPoweredFlag(OwfsClient client) throws IOException, OwfsException {
+	private void clearDeviceJustPoweredFlag(OwfsConnection client) throws IOException, OwfsException {
 		client.write(deviceName + COMMAND_POWER_ON_RESET, COMMAND_POWER_ON_RESET_CLEARING_VALUE);
 	}
 
-	private void setAlarmMaskTrigger(OwfsClient client) throws IOException, OwfsException {
+	private void setAlarmMaskTrigger(OwfsConnection client) throws IOException, OwfsException {
 		client.write(deviceName + COMMAND_SET_ALARM, alarmingMask);
 	}
 

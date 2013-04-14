@@ -3,7 +3,7 @@ package org.owfs.jowfsclient.manual;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import org.owfs.jowfsclient.OwfsClientFactory;
+import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.owfs.jowfsclient.alarm.AlarmingDevicesReader;
@@ -34,7 +34,7 @@ public class AlarmingDevicesScannerTest {
 	@Test
 	public void shouldReceiveAtLeastOneMessage(String hostName, int port, String inputDevice) throws InterruptedException, IOException, OwfsException {
 
-		OwfsClientFactory factory = new OwfsClientFactory(hostName, port);
+		OwfsConnectionFactory factory = new OwfsConnectionFactory(hostName, port);
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
 		SwitchAlarmingDeviceListener ds2408AlarmingDeviceHandler = new SwitchAlarmingDeviceListener(
 				inputDevice,

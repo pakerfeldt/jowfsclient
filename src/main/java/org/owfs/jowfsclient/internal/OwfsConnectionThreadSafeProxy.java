@@ -5,14 +5,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.locks.ReentrantLock;
-import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsConnection;
 
 /**
- * OwfsClientFactory that executes all methods utilizing ReentrantLock.
+ * OwfsConnectionFactory that executes all methods utilizing ReentrantLock.
  *
  * @author Tom Kucharski
  */
-public class OwfsClientThreadSafeFactory {
+public class OwfsConnectionThreadSafeProxy {
 
 	private ReentrantLock reentrantLock = new ReentrantLock();
 
@@ -20,24 +20,24 @@ public class OwfsClientThreadSafeFactory {
 		this.reentrantLock = lock;
 	}
 
-	public OwfsClient decorate(OwfsClient client) {
-		OwfsClientThreadSafeFactory.OwfsInvocationHandler owfsInvocationHandler = new OwfsClientThreadSafeFactory.OwfsInvocationHandler(client);
-		return (OwfsClient) Proxy.newProxyInstance(client.getClass().getClassLoader(), new Class[]{OwfsClient.class}, owfsInvocationHandler);
+	public OwfsConnection decorate(OwfsConnection client) {
+		OwfsConnectionThreadSafeProxy.OwfsInvocationHandler owfsInvocationHandler = new OwfsConnectionThreadSafeProxy.OwfsInvocationHandler(client);
+		return (OwfsConnection) Proxy.newProxyInstance(client.getClass().getClassLoader(), new Class[]{OwfsConnection.class}, owfsInvocationHandler);
 	}
 
 	private class OwfsInvocationHandler implements InvocationHandler {
 
-		private final OwfsClient owfsClient;
+		private final OwfsConnection owfsConnection;
 
-		public OwfsInvocationHandler(OwfsClient client) {
-			this.owfsClient = client;
+		public OwfsInvocationHandler(OwfsConnection client) {
+			this.owfsConnection = client;
 		}
 
 		@Override
 		public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
 			reentrantLock.lock();
 			try {
-				return method.invoke(owfsClient, objects);
+				return method.invoke(owfsConnection, objects);
 			} catch (InvocationTargetException ex) {
 				throw ex.getTargetException();
 			} finally {

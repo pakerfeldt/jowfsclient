@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientFactory;
+import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 public class AlarmingDevicesReader implements Runnable {
 	private static final Logger log = LoggerFactory.getLogger(AlarmingDevicesReader.class);
 
-	private OwfsClientFactory factory;
-	private OwfsClient client;
+	private OwfsConnectionFactory factory;
+	private OwfsConnection client;
 
 	private Map<String, AlarmingDeviceListener> alarmingDevices = new HashMap<String, AlarmingDeviceListener>();
 
-	public AlarmingDevicesReader(OwfsClientFactory factory) {
+	public AlarmingDevicesReader(OwfsConnectionFactory factory) {
 		this.factory = factory;
 	}
 
@@ -35,7 +35,7 @@ public class AlarmingDevicesReader implements Runnable {
 		alarmingDevices.remove(deviceName);
 	}
 
-	private OwfsClient getClient() {
+	private OwfsConnection getClient() {
 		connectIfNecessary();
 		return client;
 	}

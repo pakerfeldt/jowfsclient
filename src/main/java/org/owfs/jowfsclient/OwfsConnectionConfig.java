@@ -5,7 +5,7 @@ import org.owfs.jowfsclient.internal.Flags;
 /**
  * @author Tom Kucharski
  */
-public class OwfsClientConfig {
+public class OwfsConnectionConfig {
 
 	private String hostName;
 
@@ -15,7 +15,7 @@ public class OwfsClientConfig {
 
 	private int connectionTimeout = 4000; // default to 4s timeout
 
-	public OwfsClientConfig(String hostName, int portNumber) {
+	public OwfsConnectionConfig(String hostName, int portNumber) {
 		this.hostName = hostName;
 		this.portNumber = portNumber;
 	}
@@ -54,6 +54,11 @@ public class OwfsClientConfig {
 		flags.setDeviceDisplayFormat(deviceDisplay);
 	}
 
+	public Enums.OwDeviceDisplayFormat getOwDeviceDisplayFormat() {
+		return flags.getDeviceDisplayFormat();
+	}
+
+
 	/**
 	 * Sets the temperature scale that owserver should return temperature values
 	 * in.
@@ -63,6 +68,11 @@ public class OwfsClientConfig {
 	public void setTemperatureScale(Enums.OwTemperatureScale tempScale) {
 		flags.setTemperatureScale(tempScale);
 	}
+
+	public Enums.OwTemperatureScale getTemperatureScale() {
+		return flags.getTemperatureScale();
+	}
+
 
 	/**
 	 * Set whether or not persistent connection should be requested. Note that
@@ -76,6 +86,10 @@ public class OwfsClientConfig {
 		flags.setPersistence(persistence);
 	}
 
+	public Enums.OwPersistence getPersistence() {
+		return flags.getPersistence();
+	}
+
 	/**
 	 * Sets whether or not to use aliases for known slaves.
 	 *
@@ -83,6 +97,10 @@ public class OwfsClientConfig {
 	 */
 	public void setAlias(Enums.OwAlias alias) {
 		flags.setAlias(alias);
+	}
+
+	public Enums.OwAlias getAlias() {
+		return flags.getAlias();
 	}
 
 	/**
@@ -94,5 +112,7 @@ public class OwfsClientConfig {
 		flags.setBusReturn(busReturn);
 	}
 
-
+	public Enums.OwBusReturn getBusReturn() {
+		return flags.getBusReturn();
+	}
 }

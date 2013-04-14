@@ -61,6 +61,10 @@ public class Flags {
 		flags |= deviceDisplay.intValue;
 	}
 
+	public OwDeviceDisplayFormat getDeviceDisplayFormat() {
+		return OwDeviceDisplayFormat.getEnum(OwDeviceDisplayFormat.getBitmask() & flags);
+	}
+
 	/**
 	 * Sets the temperature scale.
 	 *
@@ -73,13 +77,8 @@ public class Flags {
 		flags |= tempScale.intValue;
 	}
 
-	/**
-	 * Returns the value of the persistence represented as a {@link OwPersistence}.
-	 *
-	 * @return the value of the persistence represented as a {@link OwPersistence}.
-	 */
-	public OwPersistence getPersistence() {
-		return OwPersistence.getEnum(OwPersistence.getBitmask() | flags);
+	public OwTemperatureScale getTemperatureScale() {
+		return OwTemperatureScale.getEnum(OwTemperatureScale.getBitmask() & flags);
 	}
 
 	/**
@@ -95,6 +94,15 @@ public class Flags {
 	}
 
 	/**
+	 * Returns the value of the persistence represented as a {@link OwPersistence}.
+	 *
+	 * @return the value of the persistence represented as a {@link OwPersistence}.
+	 */
+	public OwPersistence getPersistence() {
+		return OwPersistence.getEnum(OwPersistence.getBitmask() & flags);
+	}
+
+	/**
 	 * Sets the alias bits.
 	 *
 	 * @param alias the new alias value.
@@ -104,6 +112,10 @@ public class Flags {
 		flags &= ~OwAlias.getBitmask();
 		/* Set persistence bits */
 		flags |= alias.intValue;
+	}
+
+	public OwAlias getAlias() {
+		return OwAlias.getEnum(OwAlias.getBitmask() & flags);
 	}
 
 	/**
@@ -117,4 +129,9 @@ public class Flags {
 		/* Set persistence bits */
 		flags |= busReturn.intValue;
 	}
+
+	public OwBusReturn getBusReturn() {
+		return OwBusReturn.getEnum(OwBusReturn.getBitmask() & flags);
+	}
+
 }

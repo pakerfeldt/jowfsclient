@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.owfs.jowfsclient.OwfsClient;
-import org.owfs.jowfsclient.OwfsClientFactory;
+import org.owfs.jowfsclient.OwfsConnection;
+import org.owfs.jowfsclient.OwfsConnectionFactory;
 import org.owfs.jowfsclient.OwfsException;
 import org.owfs.jowfsclient.TestNGGroups;
 import org.testng.annotations.Test;
@@ -27,8 +27,8 @@ public class AlarmingDevicesReaderTest {
 
 	public void shouldReuseExistingConnection() {
 		//given
-		OwfsClientFactory factory = mock(OwfsClientFactory.class);
-		when(factory.createNewConnection()).thenReturn(mock(OwfsClient.class));
+		OwfsConnectionFactory factory = mock(OwfsConnectionFactory.class);
+		when(factory.createNewConnection()).thenReturn(mock(OwfsConnection.class));
 		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(factory);
 
 		//when
@@ -41,9 +41,9 @@ public class AlarmingDevicesReaderTest {
 
 	public void shouldNotifySeveralTimesThatAlarmArise() throws IOException, OwfsException {
 		//given
-		OwfsClient mock = mock(OwfsClient.class);
+		OwfsConnection mock = mock(OwfsConnection.class);
 		when(mock.listDirectory(anyString())).thenReturn(Arrays.asList(DEVICE_NAME_1, DEVICE_NAME_2));
-		OwfsClientFactory factory = mock(OwfsClientFactory.class);
+		OwfsConnectionFactory factory = mock(OwfsConnectionFactory.class);
 		when(factory.createNewConnection()).thenReturn(mock);
 		AlarmingDevicesReader alarmingDevicesReader = spy(new AlarmingDevicesReader(factory));
 
@@ -57,8 +57,8 @@ public class AlarmingDevicesReaderTest {
 
 	public void shouldProcessAlarmingDeviceCommander() throws IOException, OwfsException {
 		//given
-		OwfsClientFactory owfsClientFactory = mock(OwfsClientFactory.class);
-		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(owfsClientFactory);
+		OwfsConnectionFactory owfsConnectionFactory = mock(OwfsConnectionFactory.class);
+		AlarmingDevicesReader alarmingDevicesReader = new AlarmingDevicesReader(owfsConnectionFactory);
 		AlarmingDeviceListener alarmingDeviceListener = mock(AlarmingDeviceListener.class);
 		when(alarmingDeviceListener.getDeviceName()).thenReturn(DEVICE_NAME_1);
 		alarmingDevicesReader.addAlarmingDeviceHandler(alarmingDeviceListener);
@@ -67,8 +67,8 @@ public class AlarmingDevicesReaderTest {
 		alarmingDevicesReader.processAlarmingDevices(Arrays.asList(DEVICE_NAME_1, DEVICE_NAME_2));
 
 		//then
-		verify(alarmingDeviceListener, times(1)).onAlarm(any(OwfsClient.class));
-		verify(alarmingDeviceListener, times(1)).onInitialize(any(OwfsClient.class));
+		verify(alarmingDeviceListener, times(1)).onAlarm(any(OwfsConnection.class));
+		verify(alarmingDeviceListener, times(1)).onInitialize(any(OwfsConnection.class));
 	}
 
 }

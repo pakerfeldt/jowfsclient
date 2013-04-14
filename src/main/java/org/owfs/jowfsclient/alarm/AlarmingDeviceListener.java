@@ -1,7 +1,7 @@
 package org.owfs.jowfsclient.alarm;
 
 import java.io.IOException;
-import org.owfs.jowfsclient.OwfsClient;
+import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsException;
 
 /**
@@ -11,7 +11,7 @@ public interface AlarmingDeviceListener {
 
 	String getDeviceName();
 
-	void onInitialize(OwfsClient client) throws IOException, OwfsException;
+	void onInitialize(OwfsConnection client) throws IOException, OwfsException;
 
-	void onAlarm(OwfsClient client) throws IOException, OwfsException;
+	void onAlarm(OwfsConnection client) throws IOException, OwfsException;
 }

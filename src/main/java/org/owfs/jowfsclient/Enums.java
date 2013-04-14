@@ -8,7 +8,7 @@
 package org.owfs.jowfsclient;
 
 /**
- * This class contains different types of {@code enum}s used by the OwfsClient when communicating with owserver.
+ * This class contains different types of {@code enum}s used by the OwfsConnection when communicating with owserver.
  * http://owfs.org/index.php?page=owserver-flag-word
  *
  * @author Patrik Akerfeldt
@@ -19,16 +19,16 @@ public class Enums {
 	 * Defines the different types of message type that owserver supports.
 	 */
 	public static enum OwMessageType {
-		OWNET_MSG_ERROR(0),
-		OWNET_MSG_NOP(1),
-		OWNET_MSG_READ(2),
-		OWNET_MSG_WRITE(3),
-		OWNET_MSG_DIR(4),
-		OWNET_MSG_SIZE(5),
-		OWNET_MSG_PRESENCE(6),
-		OWNET_MSG_DIRALL(7),
-		OWNET_MSG_GET(8),
-		OWNET_MSG_READ_ANY(99999);
+		ERROR(0),
+		NOP(1),
+		READ(2),
+		WRITE(3),
+		DIR(4),
+		SIZE(5),
+		PRESENCE(6),
+		DIRALL(7),
+		GET(8),
+		READ_ANY(99999);
 
 		public final int intValue;
 
@@ -53,12 +53,12 @@ public class Enums {
 	 * Explanation here: http://owfs.org/uploads/owpresent.html#sect27
 	 */
 	public static enum OwDeviceDisplayFormat {
-		OWNET_DDF_F_DOT_I(0x00000000),
-		OWNET_DDF_FI(0x01000000),
-		OWNET_DDF_F_DOT_I_DOT_C(0x02000000),
-		OWNET_DDF_F_DOT_IC(0x03000000),
-		OWNET_DDF_FI_DOT_C(0x04000000),
-		OWNET_DDF_FIC(0x05000000);
+		F_DOT_I(0x00000000),
+		FI(0x01000000),
+		F_DOT_I_DOT_C(0x02000000),
+		F_DOT_IC(0x03000000),
+		FI_DOT_C(0x04000000),
+		FIC(0x05000000);
 
 		public final int intValue;
 
@@ -69,16 +69,25 @@ public class Enums {
 		public static int getBitmask() {
 			return 0x0F000000;
 		}
+
+		public static OwDeviceDisplayFormat getEnum(int intValue) {
+			for (OwDeviceDisplayFormat p : OwDeviceDisplayFormat.values()) {
+				if (p.intValue == intValue) {
+					return p;
+				}
+			}
+			return null;
+		}
 	}
 
 	/**
 	 * Used to define which temperature scale owserver should return temperatures in.
 	 */
 	public static enum OwTemperatureScale {
-		OWNET_TS_CELSIUS(0x00000000),
-		OWNET_TS_FAHRENHEIT(0x00010000),
-		OWNET_TS_KELVIN(0x00020000),
-		OWNET_TS_RANKINE(0x00030000);
+		CELSIUS(0x00000000),
+		FAHRENHEIT(0x00010000),
+		KELVIN(0x00020000),
+		RANKINE(0x00030000);
 
 		public final int intValue;
 
@@ -89,14 +98,23 @@ public class Enums {
 		public static int getBitmask() {
 			return 0x000F0000;
 		}
+
+		public static OwTemperatureScale getEnum(int intValue) {
+			for (OwTemperatureScale p : OwTemperatureScale.values()) {
+				if (p.intValue == intValue) {
+					return p;
+				}
+			}
+			return null;
+		}
 	}
 
 	/**
 	 * Whether or not to request/grant persistent connections.
 	 */
 	public static enum OwPersistence {
-		OWNET_PERSISTENCE_OFF(0x00000000),
-		OWNET_PERSISTENCE_ON(0x00000004);
+		OFF(0x00000000),
+		ON(0x00000004);
 
 		public final int intValue;
 
@@ -122,8 +140,8 @@ public class Enums {
 	 * Whether or not to use aliases for known slaves (human readable names)
 	 */
 	public static enum OwAlias {
-		OWNET_ALIAS_OFF(0x00000000),
-		OWNET_ALIAS_ON(0x00000008);
+		OFF(0x00000000),
+		ON(0x00000008);
 
 		public final int intValue;
 
@@ -134,14 +152,24 @@ public class Enums {
 		public static int getBitmask() {
 			return 0x00000008;
 		}
+
+		public static OwAlias getEnum(int intValue) {
+			for (OwAlias p : OwAlias.values()) {
+				if (p.intValue == intValue) {
+					return p;
+				}
+			}
+			return null;
+		}
+
 	}
 
 	/**
 	 * Whether or not to include special directories (settings, statistics, uncached,...)
 	 */
 	public static enum OwBusReturn {
-		OWNET_BUSRETURN_OFF(0x00000000),
-		OWNET_BUSRETURN_ON(0x00000002);
+		OFF(0x00000000),
+		ON(0x00000002);
 
 		public final int intValue;
 
@@ -151,6 +179,15 @@ public class Enums {
 
 		public static int getBitmask() {
 			return 0x00000002;
+		}
+
+		public static OwBusReturn getEnum(int intValue) {
+			for (OwBusReturn p : OwBusReturn.values()) {
+				if (p.intValue == intValue) {
+					return p;
+				}
+			}
+			return null;
 		}
 	}
 }

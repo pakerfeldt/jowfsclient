@@ -17,13 +17,13 @@ public class RequestPacketTest {
 	public static final Vector<OwMessageType> writingTypes = new Vector<OwMessageType>();
 
 	RequestPacket packet1;
-	public static final OwMessageType p1_function = OwMessageType.OWNET_MSG_DIR;
+	public static final OwMessageType p1_function = OwMessageType.DIR;
 	public static final Flags p1_flags = new Flags(100);
 	public static final String p1_payload = "P1-Payload";
 	public static final int p1_datalen = 4096;
 
 	RequestPacket packet2;
-	public static final OwMessageType p2_function = OwMessageType.OWNET_MSG_WRITE;
+	public static final OwMessageType p2_function = OwMessageType.WRITE;
 	public static final Flags p2_flags = new Flags(100);
 	public static final String p2_payload = "P2-Payload";
 	public static final String p2_write = "P2-ToWrite";
@@ -32,7 +32,7 @@ public class RequestPacketTest {
 
 	@BeforeClass
 	protected void setUp() throws Exception {
-		writingTypes.add(OwMessageType.OWNET_MSG_WRITE);
+		writingTypes.add(OwMessageType.WRITE);
 
 		packet1 = new RequestPacket(p1_function, p1_datalen, p1_flags,
 				p1_payload);
