@@ -22,6 +22,11 @@ public class AlarmingDevicesReader implements Runnable {
 		this.factory = factory;
 	}
 
+	@Override
+	public synchronized void run() {
+		tryToReadAlarmingDirectory();
+	}
+
 	public void addAlarmingDeviceHandler(AlarmingDeviceListener commander) throws IOException, OwfsException {
 		commander.onInitialize(getClient());
 		alarmingDevices.put(commander.getDeviceName(), commander);
@@ -42,11 +47,6 @@ public class AlarmingDevicesReader implements Runnable {
 
 	public boolean isWorthToWork() {
 		return alarmingDevices.size() > 0;
-	}
-
-	@Override
-	public void run() {
-		tryToReadAlarmingDirectory();
 	}
 
 	void tryToReadAlarmingDirectory() {

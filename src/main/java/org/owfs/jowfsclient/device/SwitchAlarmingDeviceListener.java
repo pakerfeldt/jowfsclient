@@ -38,6 +38,7 @@ public abstract class SwitchAlarmingDeviceListener implements AlarmingDeviceList
 	public void onInitialize(OwfsConnection client) throws IOException, OwfsException {
 		setAlarmMaskTrigger(client);
 		clearDeviceJustPoweredFlag(client);
+		clearDeviceLatchAllStatus(client);
 	}
 
 	@Override

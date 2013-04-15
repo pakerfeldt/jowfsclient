@@ -15,7 +15,7 @@ public class AlarmingDevicesScanner {
 
 	private static final int INITIAL_DELAY = 1;
 	private static final int PERIOD = 50;
-	private static final int THREAD_POOL_SIZE = 1;
+	public static final int THREAD_POOL_SIZE = 1;
 
 	private AlarmingDevicesReader reader;
 
@@ -35,6 +35,7 @@ public class AlarmingDevicesScanner {
 	public void init() {
 		log.debug("AlarmingDeviceScanner initialization");
 		scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(THREAD_POOL_SIZE);
+		scheduledThreadPoolExecutor.setMaximumPoolSize(THREAD_POOL_SIZE);
 		scheduledThreadPoolExecutor.scheduleAtFixedRate(reader, INITIAL_DELAY, period, TimeUnit.MILLISECONDS);
 	}
 
