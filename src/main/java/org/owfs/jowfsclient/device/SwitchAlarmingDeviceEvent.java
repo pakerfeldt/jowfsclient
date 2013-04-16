@@ -1,7 +1,7 @@
 package org.owfs.jowfsclient.device;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
+ * @author Tom Kucharski <kucharski.tom@gmail.com>
  * @since 08.04.13 23:56
  */
 public class SwitchAlarmingDeviceEvent {

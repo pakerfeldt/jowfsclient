@@ -9,7 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
+ * @author Tom Kucharski <kucharski.tom@gmail.com>
  * @since 14.04.13 14:18
  */
 public class OwfsConnectionFactoryTest {

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 /**
- * @author Tomasz Kucharski <kucharski.tom@gmail.com>
+ * @author Tom Kucharski <kucharski.tom@gmail.com>
  * @since 08.04.13 00:30
  */
 @Test(groups = TestNGGroups.INTEGRATION_MANUAL)

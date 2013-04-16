@@ -3,9 +3,32 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.owfs</groupId>
 	<artifactId>jowfsclient</artifactId>
+	<name>jowfsclient</name>
 	<version>1.2.0-SNAPSHOT</version>
-	<name>Jowfsclient</name>
-
+	<description>Java connector to owfs providing both network and file adapters. Provided with alarming monitor</description>
+	<url>https://github.com/tomasz-kucharski/jowfsclient</url>
+	<licenses>
+		<license>
+			<name>BSD License</name>
+			<url>http://en.wikipedia.org/wiki/BSD_licenses</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>scm:git:git://github.com/tomasz-kucharski/jowfsclient</url>
+		<connection>https://github.com/tomasz-kucharski/jowfsclient</connection>
+	</scm>
+	<developers>
+		<developer>
+			<id>tom-kucharski</id>
+			<name>Tom Kucharski</name>
+			<email>kucharski.tom@gmail.com</email>
+		</developer>
+		<developer>
+			<id>patrik-akerfeldt</id>
+			<name>Patrik Akerfeldt</name>
+		</developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -78,6 +101,15 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
