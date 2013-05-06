@@ -20,8 +20,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<url>scm:git:git://github.com/tomasz-kucharski/jowfsclient</url>
-		<connection>https://github.com/tomasz-kucharski/jowfsclient</connection>
+		<connection>scm:git:git@github.com:tomasz-kucharski/jowfsclient.git</connection>
+		<developerConnection>scm:git:git@github.com:tomasz-kucharski/jowfsclient.git</developerConnection>
+		<url>git@github.com:tomasz-kucharski/jowfsclient.git</url>
 	</scm>
 	<developers>
 		<developer>
