@@ -8,7 +8,7 @@
 	<groupId>org.owfs</groupId>
 	<artifactId>jowfsclient</artifactId>
 	<name>jowfsclient</name>
-	<version>1.2.0</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<description>Java connector to owfs providing both network and file adapters. Provided with alarming monitor</description>
 	<url>https://github.com/tomasz-kucharski/jowfsclient</url>
 	<licenses>
