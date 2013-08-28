@@ -10,7 +10,7 @@
 	<name>jowfsclient</name>
 	<version>1.2.1-SNAPSHOT</version>
 	<description>Java connector to owfs providing both network and file adapters. Provided with alarming monitor</description>
-	<url>https://github.com/tomasz-kucharski/jowfsclient</url>
+	<url>https://github.com/pakerfeldt/jowfsclient</url>
 	<licenses>
 		<license>
 			<name>BSD License</name>
@@ -19,9 +19,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:git@github.com:tomasz-kucharski/jowfsclient.git</connection>
-		<developerConnection>scm:git:git@github.com:tomasz-kucharski/jowfsclient.git</developerConnection>
-		<url>git@github.com:tomasz-kucharski/jowfsclient.git</url>
+		<connection>scm:git:git@github.com:pakerfeldt/jowfsclient.git</connection>
+		<developerConnection>scm:git:git@github.com:pakerfeldt/jowfsclient.git</developerConnection>
+		<url>git@github.com:pakerfeldt/jowfsclient.git</url>
 	</scm>
 	<developers>
 		<developer>
@@ -30,8 +30,9 @@
 			<email>kucharski.tom@gmail.com</email>
 		</developer>
 		<developer>
-			<id>patrik-akerfeldt</id>
+			<id>pakerfeldt</id>
 			<name>Patrik Akerfeldt</name>
+			<email>patrik.akerfeldt@gmail.com</email>
 		</developer>
 	</developers>
 	<dependencies>
