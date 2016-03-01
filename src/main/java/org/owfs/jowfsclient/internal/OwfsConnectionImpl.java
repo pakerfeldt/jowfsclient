@@ -75,19 +75,19 @@ public class OwfsConnectionImpl implements OwfsConnection {
 	}
 
 	private boolean tryToSocketConnectionAndStreamsInitialization() throws IOException {
-	    owSocket = new Socket();
-	    for (InetAddress inetAddress : InetAddress.getAllByName(config.getHostName())) {
-		try {
-		    owSocket.connect(new InetSocketAddress(inetAddress, config.getPortNumber()), config.getConnectionTimeout());
-		    owIn = new DataInputStream(owSocket.getInputStream());
-		    owOut = new DataOutputStream(owSocket.getOutputStream());
-		    return true;
-		} catch (Exception ste) {
-		    LoggerFactory.getLogger(OwfsConnectionImpl.class).debug(ste.getMessage());
-		    owSocket = null;
+		owSocket = new Socket();
+		for (InetAddress inetAddress : InetAddress.getAllByName(config.getHostName())) {
+			try {
+				owSocket.connect(new InetSocketAddress(inetAddress, config.getPortNumber()), config.getConnectionTimeout());
+				owIn = new DataInputStream(owSocket.getInputStream());
+				owOut = new DataOutputStream(owSocket.getOutputStream());
+				return true;
+			} catch (Exception ste) {
+				LoggerFactory.getLogger(OwfsConnectionImpl.class).debug(ste.getMessage());
+				owSocket = null;
+			}
 		}
-	    }
-	    return false;
+		return false;
 	}
 
 	@Override
