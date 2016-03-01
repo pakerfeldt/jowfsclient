@@ -12,9 +12,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.owfs.jowfsclient.Enums;
 import org.owfs.jowfsclient.OwfsConnection;
 import org.owfs.jowfsclient.OwfsConnectionConfig;
 import org.owfs.jowfsclient.OwfsException;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is used by applications that wants to communicate with the
@@ -75,15 +76,18 @@ public class OwfsConnectionImpl implements OwfsConnection {
 
 	private boolean tryToSocketConnectionAndStreamsInitialization() throws IOException {
 		owSocket = new Socket();
-		try {
-			owSocket.connect(new InetSocketAddress(config.getHostName(), config.getPortNumber()), config.getConnectionTimeout());
-			owIn = new DataInputStream(owSocket.getInputStream());
-			owOut = new DataOutputStream(owSocket.getOutputStream());
-			return true;
-		} catch (SocketTimeoutException ste) {
-			owSocket = null;
-			return false;
+		for (InetAddress inetAddress : InetAddress.getAllByName(config.getHostName())) {
+			try {
+				owSocket.connect(new InetSocketAddress(inetAddress, config.getPortNumber()), config.getConnectionTimeout());
+				owIn = new DataInputStream(owSocket.getInputStream());
+				owOut = new DataOutputStream(owSocket.getOutputStream());
+				return true;
+			} catch (Exception ste) {
+				LoggerFactory.getLogger(OwfsConnectionImpl.class).debug(ste.getMessage());
+				owSocket = null;
+			}
 		}
+		return false;
 	}
 
 	@Override
